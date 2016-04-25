@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Tile</title>
+	<style>*{margin:0}</style>
+</head>
+<body>
+	<canvas id="c" width="300" height="200"></canvas>
+	<script type="text/javascript">
+		c = document.getElementById("c");
+		a = c.getContext("2d");
+		s = Array("1f600","1f332","1f333","1f3e0","1f3e4","1f400", "1f6a7", "1f427", "1f335", "1f334", "1f401", "1f42a", "1f42b", "1f47e", "1f422", "1f3e1", "1f40d", "1f4e6", "1f402", "1f525", "25fd", "1f409", "mspaintshop", "1f496", "1f47b", "1f3e6", "1f3ea", "1f3ef", "1f4a9", "1f3ec");
+		img = Array();
+		for(i = 0; i < s.length; i++) {
+			img[i] = new Image();
+			img[i].src = "images/" + s[i] + ".png";
+			img[i].test = i;
+			img[i].onload = function() {
+				var j = this.test;
+				a.drawImage(this, (j%10)*27, Math.floor(j/10)*27, 25, 25);
+			};
+		}
+	</script>
+</body>
+</html>

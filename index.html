@@ -1,0 +1,608 @@
+<!doctype html>
+<html>
+<head>
+
+	<!--
+	
+		Hey, you! Don't cheat!
+			
+	-->
+	
+	<meta name="theme-color" content="#3f51b5">
+	<title>Material Warrior</title>
+	
+	<link rel="stylesheet" href="material.min.css">
+	<link rel="stylesheet" href="style.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="shortcut icon" type="image/png" href="images/1f61b.png"/>
+	
+	<script src="material.min.js"></script>
+	<script src="rot.min.js"></script>
+	<script src="chance.min.js"></script>
+	
+	<script src="tools.js"></script>
+	<script src="ui.js"></script>
+	<script src="player.js"></script>
+	<script src="battle.js"></script>
+	<script src="keyboard.js"></script>
+	<script src="game.js"></script>
+	<script src="console.js"></script>
+	<script src="browser.js"></script>
+	<script src="showads.js"></script>
+	
+</head>
+<body class="mdl-color--grey-100 mdl-color-text--grey-700">
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-71788573-2', 'auto');
+	  ga('send', 'pageview');
+
+	</script>
+
+	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+	  <header class="mdl-layout__header">
+		<div class="mdl-layout__header-row">
+		  <span class="mdl-layout-title">Material Warrior</span>
+		</div>
+		<div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+		  <a href="#scroll-tab-1" class="mdl-layout__tab is-active">Map</a>
+		  <a href="#scroll-tab-2" class="mdl-layout__tab">Inventory</a>
+		  <a href="#scroll-tab-3" class="mdl-layout__tab" style="display:none;" id="tab-smartphone">Smartphone</a>
+		</div>
+	  </header>
+	  
+	  <div class="mdl-layout__drawer">
+		<img src="images/1f61b.png" class="drawer-image">
+		<span class="mdl-layout-title">Material Warrior</span>
+		<nav class="mdl-navigation">
+		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('settings')"><i class="material-icons">settings</i><span>Settings</span></a>
+		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('keyboard')"><i class="material-icons">help</i><span>Keyboard Shortcuts</span></a>
+		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('about')"><i class="material-icons">help</i><span>About</span></a>
+		</nav>
+	  </div>
+	  
+	  <main class="mdl-layout__content">
+		<section class="mdl-layout__tab-panel is-active" id="scroll-tab-1">
+		  <div class="page-content">
+			<div class="game-container">
+				<div class="mdl-card mdl-shadow--4dp" style="width:auto">
+				  <div class="mdl-card__media" class="game-card">
+					<div id="mini-mapinfo">
+						<div style="float:left">
+							<span>Seed: <b id="game-seed">0</b></span><br>
+							<span>x: <b id="game-x">0</b> y: <b id="game-y">0</b></span>
+						</div>
+						<div style="float:right; text-align:right;">
+							<span># of rats: <b id="game-rats">0</b></span><br>
+							<span># of mice: <b id="game-mice">0</b></span><br>
+							<span># of camel1: <b id="game-camel1">0</b></span><br>
+							<span># of camel2: <b id="game-camel2">0</b></span><br>
+							<span># of snakes: <b id="game-snakes">0</b></span><br>
+							<span># of goats: <b id="game-goats">0</b></span><br>
+							<span># of dragons: <b id="game-dragons">0</b></span><br>
+							<span># of ghosts: <b id="game-ghosts">0</b></span><br>
+							<span># of alien2: <b id="game-alien2">0</b></span><br>
+						</div>
+					</div>
+					<div id="game-ascii"></div>
+					<div id="red-effect"></div>
+				  </div>
+				  <div class="mdl-card__supporting-text">
+					<div style="float:left">You have <b id="player-gold">0</b> gold.</div>
+					<div style="float:right; text-align:right;">HP: <b id="player-hp-stats">0</b> / <b id="player-maxhp-stats">0</b></div>
+					<div style="clear:both;"></div><br>
+					<div id="game-log"></div>
+				  </div>
+				</div>
+			</div>
+			
+			<div id="no-ads" style="display:none;">It would be appreciated if you disable AdBlock for this site :)</div>
+			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+			<!-- Material Warrior -->
+			<ins class="adsbygoogle"
+				 style="display:inline-block;width:728px;height:90px"
+				 data-ad-client="ca-pub-3910757990517665"
+				 data-ad-slot="7597868839"></ins>
+			<script>
+			(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+			
+		  </div>
+		</section>
+		
+		<section class="mdl-layout__tab-panel" id="scroll-tab-2" style="display:none;">
+		  <div class="page-content">
+			<div class="item-section">
+				<h6>WEAPON</h6>
+				<div id="weapon-options" class="item-options mdl-shadow--2dp"></div>
+				<div class="mdl-card mdl-shadow--2dp item-card">
+				  <div class="mdl-card__title">
+					<span id="selected-weapon" class="item-name" onclick="UI.toggleOption('weapon')"></span>
+				  </div>
+				  <div class="mdl-card__media mdl-card--expand">
+					<img src="images/1f44a.png" id="selected-weapon-image">
+				  </div>
+				  <div class="mdl-card__supporting-text" id="selected-weapon-desc"></div>
+				  <div class="mdl-card__actions mdl-card--border" id="selected-weapon-damage"></div>
+				</div>
+			</div>
+			
+			<div class="item-section" id="head-section" style="display:none;">
+				<h6>HEAD</h6>
+				<div id="head-options" class="item-options mdl-shadow--2dp">
+					<div class="option">None</div>
+				</div>
+				<div class="mdl-card mdl-shadow--2dp item-card">
+				  <div class="mdl-card__title">
+					<span id="selected-head" class="item-name" onclick="UI.toggleOption('head')">None <i>&#x25BC;</i></span>
+				  </div>
+				  <div class="mdl-card__media mdl-card--expand">
+					<img src="images/blank.png" id="selected-head-image">
+				  </div>
+				  <div class="mdl-card__supporting-text" id="selected-head-desc">
+					Sometimes less is more.<br>
+				  </div>
+				  <div class="mdl-card__actions mdl-card--border" id="selected-head-defense">
+					<b>Defense:</b> 0
+				  </div>
+				</div>
+			</div>
+			
+			<div class="item-section" id="body-section" style="display:none;">
+				<h6>BODY</h6>
+				<div id="body-options" class="item-options mdl-shadow--2dp">
+					<div class="option">None</div>
+				</div>
+				<div class="mdl-card mdl-shadow--2dp item-card">
+				  <div class="mdl-card__title">
+					<span id="selected-body" class="item-name" onclick="UI.toggleOption('body')">None <i>&#x25BC;</i></span>
+				  </div>
+				  <div class="mdl-card__media mdl-card--expand">
+					<img src="images/blank.png" id="selected-body-image">
+				  </div>
+				  <div class="mdl-card__supporting-text" id="selected-body-desc">
+					Sometimes less is more.<br>
+				  </div>
+				  <div class="mdl-card__actions mdl-card--border" id="selected-body-defense">
+					<b>Defense:</b> 0
+				  </div>
+				</div>
+			</div>
+			
+			<div class="item-section" id="inventory-items"></div>
+		  </div>
+		</section>
+		
+		<section class="mdl-layout__tab-panel" id="scroll-tab-3" style="display:none;">
+			<div id="smartphone-container">
+				<div class="mdl-card mdl-shadow--4dp smartphone">
+				  <div class="mdl-card__media">
+					<div id="internet-browser">
+						<div id="url-bar">
+							<input type="text" id="url-box" onkeyup="if(event.keyCode==13)browser.open(this.value)">
+							<div id="smartphone-options">
+								<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="browser.open('about:bookmarks')">VIEW BOOKMARKS</button>
+								<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="browser.bookmarkPage()">ADD TO BOOKMARKS</button>
+							</div>
+						</div>
+						<div id="webpage-contents"></div>
+					</div>
+				  </div>
+				</div>
+			</div>
+		</section>
+	  </main>
+	</div>
+	
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-settings">
+		<div class="dialog-inner">
+			<div class="dialog-title">Settings</div>
+			<div class="dialog-content">
+				Autosave is automatically set to on each time the page is opened.<br><br>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.saveGame(false, true)">SAVE GAME</button><br>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.toggleAutosave()">TOGGLE AUTOSAVE</button> <span id="autosave-time" class="button-text"></span><br>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.saveGame(true, false)">EXPORT SAVE AS TEXT</button><br>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.loadGame(true)">IMPORT SAVE FROM TEXT</button><br>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.reset()">RESET GAME</button><br><br>
+				<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="toggle-mapinfo">
+				  <input type="checkbox" id="toggle-mapinfo" class="mdl-checkbox__input" onclick="UI.toggleMapinfo()">
+				  <span class="mdl-checkbox__label" style="position:relative;top:-2px;">Show map info in game area</span>
+				</label>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert();">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-about">
+		<div class="dialog-inner">
+			<div class="dialog-title">About this game</div>
+			<div class="dialog-content">
+				This game uses:<br>
+				<a href="http://vanilla-js.com/" target="_blank">Vanilla JS</a><br>
+				<a href="http://getmdl.io" target="_blank">Material Design Lite</a> by Google<br>
+				<a href="http://ondras.github.io/rot.js/hp/" target="_blank">rot.js</a> by Ondrej Zara<br>
+				<a href="https://github.com/twitter/twemoji" target="_blank">Twitter Emojis</a> by Twitter<br>
+				<a href="http://chancejs.com/" target="_blank">chance.js</a> by Victor Quinn<br><br>
+				
+				Subreddit: <a href="https://www.reddit.com/r/materialwarrior" target="_blank">/r/materialwarrior</a><br>
+				GitHub Repo: <a href="https://github.com/gamehelp16/material-warrior" target="_blank">https://github.com/gamehelp16/material-warrior</a><br>
+				Game Version: 1.0<br><br>
+				
+				Check out my other (older) games:<br>
+				<a href="http://gamehelp16.github.io/thegoldfactory/" target="_blank">The Gold Factory</a><br>
+				<a href="http://gamehelp16.github.io/chickens/" target="_blank">Chickens!</a>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-keyboard">
+		<div class="dialog-inner">
+			<div class="dialog-title">Keyboard Shortcuts</div>
+			<div class="dialog-content" style="max-height: 300px; overflow-y: auto;">
+				This game has keyboard shortcuts for battle actions:<br>
+				Press <b>Z</b> to attack.<br>
+				Press <b>X</b> to run away.<br> <!-- scaredy cat! -->
+				Press <b>C</b> to eat apple (you can't eat apple while attacking).
+				<div id="more-shortcuts" style="display:none;">
+					Press <b>V</b> to shoot using infinity gun.<br><br>
+					How to open the developer console:<br><br>
+					<b>Chrome:</b><br>
+					Windows: Ctrl + Shift + J<br>
+					Mac OS: Cmd + Opt + J<br><br>
+					<b>Firefox:</b><br>
+					Windows: Ctrl + Shift + K<br>
+					Mac OS: Cmd + Opt + K<br><br>
+					<b>Internet Explorer:</b><br>
+					F12, then click on the "Console" tab<br><br>
+					<b>Safari:</b><br>
+					Cmd + Opt + C<br>
+					<i>In order to view the console in Safari, you have to enable the "Show Develop menu in menu bar" setting in the "Advanced" pane of Safari's preferences</i><br><br>
+					<a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">Click here for source and more info</a>
+				</div>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-forge">
+		<div class="dialog-inner">
+			<div class="dialog-title">The Forge</div>
+			<div class="dialog-content">
+				<div id="need-more-power">It seems that your hands must be stronger to be able to use the forge.</div>
+				<div id="forge-contents" style="display:none;">
+					<div id="sharpen-scissors"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.forge('scissors')">SHARPEN SCISSORS</button> <span class="button-text">(<b id="sharpen-scissors-gold"></b> gold) Increases your scissors' damage.</span></div>
+					<div id="sharpen-knife"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.forge('knife')">SHARPEN KNIFE</button> <span class="button-text">(<b id="sharpen-knife-gold"></b> gold) Increases your knife's damage.</span></div>
+				</div>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-training">
+		<div class="dialog-inner">
+			<div class="dialog-title">Training Center</div>
+			<div class="dialog-content">
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.training('punch')" id="punch-dummy">PUNCH A DUMMY</button> <span class="button-text" id="punches-left">Increases fists' damage</span><br>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.training('start-meditate')" id="do-meditate">DO SOME MEDITATION</button> <span class="button-text">Increases max hp by one</span>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-shop">
+		<div class="dialog-inner">
+			<div class="dialog-title">The Shop</div>
+			<div class="dialog-content">
+				<div id="buy-scissors"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('scissors')">BUY SCISSORS</button> <span class="button-text">(<b>5</b> gold)</span></div>
+				<div id="buy-knife"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('knife')">BUY A KNIFE</button> <span class="button-text">(<b>20</b> gold)</span></div>
+				<div id="buy-apple"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('apple')">BUY AN APPLE</button> <span class="button-text">(<b>10</b> gold)</span></div>
+				<div id="buy-apple-10"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('apple-10')">BUY 10 APPLES</button> <span class="button-text">(<b>100</b> gold)</span></div>
+				<br>To equip a weapon, open the inventory tab and click the text "fists". Then choose a weapon from the dropdown menu.
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-ms-shop">
+		<div class="dialog-inner">
+			<div class="dialog-title">MS Paint Shop</div>
+			<!--span style="color:red;">M</span><span style="color:orange;">S</span> <span style="color:yellow;">P</span><span style="color:#0f0;">a</span><span style="color:#00f;">i</span><span style="color:blue;">n</span><span style="color:violet;">t</span> <span style="color:red;">S</span><span style="color:orange;">h</span><span style="color:yellow;">o</span><span style="color:#0f0;">p</span-->
+			<div class="dialog-content">
+				We only sell items made purely with MS Paint.<br>
+				Don't forget to use the items you bought!<br><br>
+				<div id="buy-magic-hat"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('magic-hat')">BUY MAGIC HAT</button> <span class="button-text">(<b>750</b> gold)</span></div>
+				<div id="buy-heart-armor"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('heart-armor')">BUY HEART ARMOR</button> <span class="button-text">(<b>100000</b> gold)</span></div>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-battle">
+		<div class="dialog-inner">
+			<div class="dialog-title" id="battle-title">Battle!</div>
+			<div class="dialog-content" id="battle-div">
+				<div id="player-div">
+					<div id="player-anim">
+						<div id="player-bar" class="health-bar"></div>
+						<img src="images/1f600.png" id="player-img">
+					</div>
+					<br>
+					HP: <span id="player-hp-text"><b id="player-hp">0</b> / <b id="player-maxhp">0</b></span>
+					<span id="player-hp-heart"></span><br>
+					Weapon: <b id="player-weapon"></b><br>
+					Damage: <b id="player-damage">0</b>
+				</div>
+				<div id="enemy-div">
+					<div id="enemy-anim">
+						<div id="enemy-bar" class="health-bar"></div>
+						<img src="images/1f400.png" id="enemy-img">
+					</div>
+					<div style="clear:both;"></div><br>
+					HP: <b id="enemy-hp">0</b> / <b id="enemy-maxhp">0</b><br>
+					Damage: <b id="enemy-damage">0</b>
+					<span id="enemy-special"></span>
+				</div>
+				<img id="enemy-bullet" src="images/1f525.png">
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.attack()" id="attack-button">
+				ATTACK!
+			</button>
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.run()" id="run-away">
+				RUN AWAY
+			</button>
+			<div style="float:left">
+				<div id="eat-apple-div" style="height:36px;">
+					<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.eatApple()" id="eat-apple" style="margin-left:2px;">
+						EAT APPLE
+					</button>
+				</div>
+				<div class="mdl-tooltip mdl-tooltip--large" for="eat-apple-div" id="apple-left">
+					? left
+				</div>
+				<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.shoot()" id="shoot-button">
+					SHOOT
+				</button>
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-chat">
+		<div class="dialog-inner">
+			<div class="dialog-title" id="chat-title">Chat</div>
+			<div class="dialog-content" id="chat-content"></div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="dialog-next">
+				NEXT
+			</button>
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="chat-close" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-package">
+		<div class="dialog-inner">
+			<div class="dialog-title" id="package-title">A Package!</div>
+			<div class="dialog-content" id="package-content"></div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="package-take">
+				TAKE ITEM
+			</button>
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-meditate">
+		<div class="dialog-inner">
+			<div class="dialog-title">Meditate</div>
+			<div class="dialog-content" id="meditate-content"></div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Player.training('stop-meditate')">
+				STOP MEDITATING
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-locked-house">
+		<div class="dialog-inner">
+			<div class="dialog-title">A House</div>
+			<div class="dialog-content" id="house-content"></div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="give-pizza">
+				GIVE PIZZA
+			</button>
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="enter-portal" onclick="Player.negativeZone()">
+				ENTER PORTAL
+			</button>
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-store">
+		<div class="dialog-inner">
+			<div class="dialog-title">Convenience Store</div>
+			<div class="dialog-content">
+				<div id="buy-teleporter"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('teleporter')">BUY TELEPORT MACHINE</button> <span class="button-text">(<b>50000</b> gold)</span></div>
+				<div id="buy-blue-heart"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('blue-heart')">BUY A BLUE HEART</button> <span class="button-text">(<b>100000</b> gold)</span></div>
+				<div id="buy-smartphone"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('smartphone')">BUY A SMARTPHONE</button> <span class="button-text">(<b>10000000</b> gold)</span></div><br>
+				The teleport machine will appear near your respawn area.
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-museum">
+		<div class="dialog-inner">
+			<div class="dialog-title">Museum</div>
+			<div class="dialog-content">The museum has a lot of paintings and literatures inside, you can read some old scripts stored here.<br><br>
+			<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.read(1)">READ OLD SCRIPT 1</button><br>
+			<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.read(2)">READ OLD SCRIPT 2</button><br>
+			<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.read(3)">READ OLD SCRIPT 3</button><br>
+			<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.read(4)">READ OLD SCRIPT 4</button><br></div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-script">
+		<div class="dialog-inner">
+			<div class="dialog-title">Old Script</div>
+			<div class="dialog-content">You read the script, it says:<pre id="scroll-text"></pre></div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-temple">
+		<div class="dialog-inner">
+			<div class="dialog-title">The Temple</div>
+			<div class="dialog-content" id="no-knowledge">Here, we train beginners <!-- or n00bs --> to be ready to do something, but you don't seem to know what that "something" is yet. When you know it, please come back here.</div>
+			<div class="dialog-content" id="has-knowledge" style="display:none;">
+				So, you have already known about "the negative zone" and the creature inside, right? We are here to help you prepare to defeat that creature, however you will need some items:<br><br>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.temple('armor')">DRAGON ARMOR</button><br>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.temple('gun')">INFINITY GUN</button><br>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.temple('potion')">BLUE HEART POTION</button>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-bank">
+		<div class="dialog-inner">
+			<div class="dialog-title">Bank</div>
+			<div class="dialog-content">
+				<div id="available-loans">
+					You could take a loan from the bank if you wanted to.<br><br>
+					<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.loan('small')">SMALL LOAN</button> <span class="button-text">(<b>1000000</b> gold)</span><br>
+					<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="alert('Sorry, you can\'t take a large loan right now.')">LARGE LOAN</button> <span class="button-text">(<b>100000000</b> gold)</span>
+				</div>
+				<div id="pay-loan" style="display:none;">
+					You could pay your loan if you have enough gold.<br><br>
+					<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.loan('pay')">PAY LOAN</button> <span class="button-text">(<b>1000000</b> gold)</span>
+				</div><br>
+				If you have an unpaid loan, you can't visit houses in this area until you pay your loan (you still can visit the shop, training center, etc.).
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-temple2">
+		<div class="dialog-inner">
+			<div class="dialog-title" id="temple-title"></div>
+			<div class="dialog-content" id="temple-content">
+				<div id="temple-armor" style="display:none;">Dragon skins make a really good armor, you can craft one if you have enough of these skins. Your knife also needs to have at least 50000 damage so we can use it to cut the dragon skin.</div>
+				<div id="temple-gun" style="display:none;">It is said that this gun is only available for purchase from the developer himself. To do so, open your browser's developer console (open the "keyboard shortcuts" section to see how) and type in this command: <span style="font-family:monospace;color:#0f0;background:black;">developer.shop()</span></div>
+				<div id="temple-potion" style="display:none;">Did you know that turning a blue heart into a potion gives you more max HP than the blue heart itself? To make a blue heart potion, you need a blue heart (obviously) and a shiny heart.</div>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Player.craft('potion')" id="craft-potion">
+				CRAFT AND DRINK THE POTION
+			</button>
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Player.craft('armor')" id="craft-armor">
+				CRAFT ARMOR
+			</button>
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div id="modal" onclick="if(Battle.ongoing=='none'&&!Player.meditating)UI.hideAlert();"></div>
+	
+	<script type="text/javascript">
+		
+		Game.loadGame(false);
+		hasAdblock = false;
+		if(window.canRunAds === undefined) {
+			document.getElementById("no-ads").style.display = 'block';
+			hasAdblock = true;
+		}
+		ga('send', 'event', 'HasAdblock', hasAdblock ? 'Yes' : 'No', {'nonInteraction': true})
+		
+	</script>
+	
+</body>
+</html>
