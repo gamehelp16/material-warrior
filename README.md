@@ -1,10 +1,15 @@
 # Material Warrior
-Where an incremental game meets roguelike, material design(ish) and, of course, emojis.
+Where an incremental game meets material design(ish) and, of course, emojis.
 
 Play the game here: http://gamehelp16.github.io/material-warrior/
 
 
 ## Changelog:
+
+**Version 1.1.1 (May 9th 2016)**
+
+- Lowered the price of some items.
+- Lava snake is a little bit slower.
 
 **Version 1.1 (May 9th 2016)**
 - Tweaked some numbers (enemy hp, prices, etc.) **(you probably want to start over the game because of this)**.
@@ -18,4 +23,5 @@ Play the game here: http://gamehelp16.github.io/material-warrior/
 - Bug fixes and improvements (yea I know this one is kinda annoying, but it's just minor things that you probably won't notice).
 
 **Version 1.0 (April 25th 2016)**
+
 Initial Release.

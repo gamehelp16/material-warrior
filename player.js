@@ -288,7 +288,7 @@ var Player = {
 							Game.drawTiles();
 							i++;
 							if(i-5==Game.snake.length)clearInterval(interval), Game.snakeActivated = false;
-						}, 200);
+						}, 220);
 					}
 					else if(y==186 && !Game.save.pathActivated){
 						UI.addLog("You activated another pressure plate.");
@@ -418,18 +418,18 @@ var Player = {
 	
 	buy: function(item) {
 		if(item=="scissors" && !tools.arrayContains(Player.save.inventory.weapon,"scissors")) {
-			if(Player.save.gold>=7) {
-				Player.save.gold -= 7;
+			if(Player.save.gold>=5) {
+				Player.save.gold -= 5;
 				Player.save.inventory.weapon.push("scissors");
-				UI.addLog("You bought scissors for <b>7</b> gold.");
+				UI.addLog("You bought scissors for <b>5</b> gold.");
 			}
 			else { alert('Not enough gold!'); }
 		}
 		else if(item=="knife") {
-			if(Player.save.gold>=25) {
-				Player.save.gold -= 25;
+			if(Player.save.gold>=17) {
+				Player.save.gold -= 17;
 				Player.save.inventory.weapon.push("knife");
-				UI.addLog("You bought a knife for <b>25</b> gold.");
+				UI.addLog("You bought a knife for <b>17</b> gold.");
 			}
 			else { alert('Not enough gold!'); }
 		}
@@ -450,10 +450,10 @@ var Player = {
 			else { alert('Not enough gold!'); }
 		}
 		else if(item=="headphones") {
-			if(Player.save.gold>=75) {
-				Player.save.gold -= 75;
+			if(Player.save.gold>=50) {
+				Player.save.gold -= 50;
 				Player.save.inventory.head.push("headphones");
-				UI.addLog("You bought a pair of headphones for <b>75</b> gold.");
+				UI.addLog("You bought a pair of headphones for <b>50</b> gold.");
 			}
 			else { alert('Not enough gold!'); }
 		}
