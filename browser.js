@@ -40,7 +40,7 @@ var browser = {
 			"reddit": [],
 			"ebay": [],
 			"amazon": [],
-			"google": [],
+			"google": [""],
 			"i.imgur": [],
 			"youtube": [],
 		};
@@ -180,7 +180,7 @@ var browser = {
 	open: function(url) {
 		
 		var notfound = false;
-		ga('send', 'event', 'useBrowser', url, {'nonInteraction': true});
+		if(url!="about:bookmarks")ga('send', 'event', 'useBrowser', url, {'nonInteraction': true});
 		
 		if(url!="about:bookmarks" && url.indexOf("gamehelp16.github.io")<0) {
 		

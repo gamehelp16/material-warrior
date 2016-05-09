@@ -262,7 +262,7 @@
 }
 
 #game-ascii canvas {
-	border-radius:2px;
+	border-radius:2px 2px 0 0;
 }
 
 #red-effect {
@@ -524,6 +524,14 @@ ins.adsbygoogle {
 
 .mdl-layout.is-upgraded .mdl-layout__tab-panel.is-active {
 	display: block !important;
+}
+
+#save-code-textarea {
+	width: 100%;
+	padding: 0;
+	border: none;
+	outline: none;
+	height: 200px;
 }
 
 /*.dialog-ms-shop {

@@ -72,7 +72,7 @@ var Player = {
 		"pizza": {
 			"name": "pizza",
 			"image": "1f355",
-			"description": "These pizzas look and smell delicious, unfortunately you have to deliver them.",
+			"description": "These pizzas look and smell delicious, unfortunately you can't enjoy their gloriousness.",
 		},
 		
 		"dragon-corpse": {
@@ -117,49 +117,51 @@ var Player = {
 				var spawny = Math.round(Math.random()*(bottom-top))+top;
 			}
 			
-			if(Game.getEntityCount("rat")<10 && Math.random()<.1) {
+			var spawnChance = .05;
+			
+			if(Game.getEntityCount("rat")<10 && Math.random()<spawnChance) {
 				if(Game.getTile(spawnx,spawny)===undefined && Game.getEntity(spawnx,spawny)===undefined && spawny>0 && spawny<60 && spawnx>0 && spawnx<Game.mapwidth)Game.addEnemy(spawnx,spawny,"rat");
 			}
 			
-			if(Game.getEntityCount("mouse")<10 && Math.random()<.1) {
+			if(Game.getEntityCount("mouse")<10 && Math.random()<spawnChance) {
 				if(Game.getTile(spawnx,spawny)===undefined && Game.getEntity(spawnx,spawny)===undefined && spawny>0 && spawny<60 && spawnx>0 && spawnx<Game.mapwidth)Game.addEnemy(spawnx,spawny,"mouse");	
 			}
 			
-			if(Game.getEntityCount("camel1")<10 && Math.random()<.1) {
+			if(Game.getEntityCount("camel1")<10 && Math.random()<spawnChance) {
 				if(Game.getTile(spawnx,spawny)===undefined && Game.getEntity(spawnx,spawny)===undefined && spawny>60 && spawny<90 && spawnx>0 && spawnx<Game.mapwidth)Game.addEnemy(spawnx,spawny,"camel1");	
 			}
 			
-			if(Game.getEntityCount("camel2")<10 && Math.random()<.1) {
+			if(Game.getEntityCount("camel2")<10 && Math.random()<spawnChance) {
 				if(Game.getTile(spawnx,spawny)===undefined && Game.getEntity(spawnx,spawny)===undefined && spawny>60 && spawny<90 && spawnx>0 && spawnx<Game.mapwidth)Game.addEnemy(spawnx,spawny,"camel2");
 			}
 			
-			if(Game.getEntityCount("snake")<20 && Math.random()<.1) {
+			if(Game.getEntityCount("snake")<10 && Math.random()<spawnChance) {
 				if(Game.getTile(spawnx,spawny)===undefined && Game.getEntity(spawnx,spawny)===undefined && spawny>113 && spawny<150 && spawnx>20 && spawnx<Game.mapwidth)Game.addEnemy(spawnx,spawny,"snake");
 			}
 			
-			if(Game.getEntityCount("goat")<20 && Math.random()<.1) {
+			if(Game.getEntityCount("goat")<10 && Math.random()<spawnChance) {
 				if(Game.getTile(spawnx,spawny)===undefined && Game.getEntity(spawnx,spawny)===undefined && spawny>113 && spawny<150 && spawnx>20 && spawnx<Game.mapwidth)Game.addEnemy(spawnx,spawny,"goat");
 			}
 			
-			if(Game.getEntityCount("dragon")<10 && Math.random()<.1) {
+			if(Game.getEntityCount("dragon")<10 && Math.random()<spawnChance) {
 				if(Game.getTile(spawnx,spawny)===undefined && Game.getEntity(spawnx,spawny)===undefined && spawny>191 && spawny<250 && spawnx>0 && spawnx<Game.mapwidth)Game.addEnemy(spawnx,spawny,"dragon");
 			}
 			
-			if(Game.getEntityCount("ghost")<10 && Math.random()<.1) {
+			if(Game.getEntityCount("ghost")<10 && Math.random()<spawnChance) {
 				if(Game.getTile(spawnx,spawny)===undefined && Game.getEntity(spawnx,spawny)===undefined && spawny>191 && spawny<250 && spawnx>0 && spawnx<Game.mapwidth)Game.addEnemy(spawnx,spawny,"ghost");
 			}
 			
-			if(Game.getEntityCount("alien2")<20 && Math.random()<.1) {
+			if(Game.getEntityCount("alien2")<20 && Math.random()<spawnChance) {
 				if(Game.getTile(spawnx,spawny)===undefined && Game.getEntity(spawnx,spawny)===undefined && spawny>270 && spawny<350 && spawnx>0 && spawnx<Game.mapwidth)Game.addEnemy(spawnx,spawny,"alien2");
 			}
 			
-			var dijkstra = new ROT.Path.Dijkstra(Player.save.x, Player.save.y, function(x,y) {
+			/*var dijkstra = new ROT.Path.Dijkstra(Player.save.x, Player.save.y, function(x,y) {
 				console.log("Game.getEntity("+x+","+y+")");
 				//if(Game.getEntity(x,y)!==undefined) return false;
 				if(Game.getTile(x,y)===undefined)return true;
 				else if(Game.getTile(x,y).walkable)return true;
 				else return false;
-			});
+			});*/
 			
 			// TODO (maybe): makes the enemies move towards the player (causes lag and is kind of weird)
 			
@@ -298,12 +300,12 @@ var Player = {
 						Game.drawTiles();
 						Game.save.pathActivated = true;
 					}
-					else if(x==-200){
+					/*else if(x==-200){
 						if(y==-187)UI.addLog("Do you want to play with me?");
 						else if(y==-186)UI.addLog("But time is running out..");
 						else if(y==-185)UI.addLog("Don't worry, you are already trapped here.");
 						else if(y==-184)UI.addLog("Trying to escape is useless.");
-					}
+					}*/
 				}
 				else if(tile=="MS") {
 					UI.showAlert('ms-shop');
@@ -371,13 +373,13 @@ var Player = {
 				}
 			}
 			else if(type=="e") {
-				if(Game.getEntity(x,y).type=="hostile") {
+				if(Battle.getEnemyInfo(Game.getEntity(x,y).name) !== undefined) {
 					Battle.engage(x,y);
 				}
-				else if(Game.getEntity(x,y).ascii=="PA") {
+				else if(Game.getEntityAscii(x,y)=="PA") {
 					Player.takePackage(x,y);
 				}
-				else if(Game.getEntity(x,y).ascii=="SH") {
+				else if(Game.getEntityAscii(x,y)=="SH") {
 					Player.takeItem("s_heart",x,y);
 				}
 			}
@@ -416,34 +418,42 @@ var Player = {
 	
 	buy: function(item) {
 		if(item=="scissors" && !tools.arrayContains(Player.save.inventory.weapon,"scissors")) {
-			if(Player.save.gold>=5) {
-				Player.save.gold -= 5;
+			if(Player.save.gold>=7) {
+				Player.save.gold -= 7;
 				Player.save.inventory.weapon.push("scissors");
-				UI.addLog("You bought scissors for <b>5</b> gold.");
+				UI.addLog("You bought scissors for <b>7</b> gold.");
 			}
 			else { alert('Not enough gold!'); }
 		}
 		else if(item=="knife") {
-			if(Player.save.gold>=20) {
-				Player.save.gold -= 20;
+			if(Player.save.gold>=25) {
+				Player.save.gold -= 25;
 				Player.save.inventory.weapon.push("knife");
-				UI.addLog("You bought a knife for <b>20</b> gold.");
+				UI.addLog("You bought a knife for <b>25</b> gold.");
 			}
 			else { alert('Not enough gold!'); }
 		}
 		else if(item=="apple") {
-			if(Player.save.gold>=10) {
-				Player.save.gold -= 10;
+			if(Player.save.gold>=50) {
+				Player.save.gold -= 50;
 				Player.save.inventory.item.apple++;
-				UI.addLog("You bought an apple for <b>10</b> gold.");
+				UI.addLog("You bought an apple for <b>50</b> gold.");
 			}
 			else { alert('Not enough gold!'); }
 		}
 		else if(item=="apple-10") {
-			if(Player.save.gold>=100) {
-				Player.save.gold -= 100;
+			if(Player.save.gold>=475) {
+				Player.save.gold -= 475;
 				Player.save.inventory.item.apple+=10;
-				UI.addLog("You bought 10 apples for <b>100</b> gold.");
+				UI.addLog("You bought 10 apples for <b>475</b> gold.");
+			}
+			else { alert('Not enough gold!'); }
+		}
+		else if(item=="headphones") {
+			if(Player.save.gold>=75) {
+				Player.save.gold -= 75;
+				Player.save.inventory.head.push("headphones");
+				UI.addLog("You bought a pair of headphones for <b>75</b> gold.");
 			}
 			else { alert('Not enough gold!'); }
 		}
@@ -590,11 +600,11 @@ var Player = {
 			if(Player.save.gold>=tools.scissorsSharpenPrice(damage)) {
 				Player.save.gold-=tools.scissorsSharpenPrice(damage);
 				var totalDmg = 0;
-				if(damage<100)totalDmg = 100;
-				else totalDmg = damage+100;
+				if(damage<50)totalDmg = 50;
+				else totalDmg = damage+50;
 				Battle.setWeaponInfo("scissors","damage",totalDmg);
 				document.getElementById("sharpen-scissors-gold").innerHTML = tools.scissorsSharpenPrice(totalDmg);
-				UI.addLog("Now your scissors deal <b>"+totalDmg+"</b> damage.");
+				UI.addLog("Your scissors now deal <b>"+totalDmg+"</b> damage.");
 				UI.update();
 			}
 			else { alert('Not enough gold!'); }
@@ -604,11 +614,11 @@ var Player = {
 			if(Player.save.gold>=tools.knifeSharpenPrice(damage)) {
 				Player.save.gold-=tools.knifeSharpenPrice(damage);
 				var totalDmg = 0;
-				if(damage<10000)totalDmg = 10000;
-				else totalDmg = damage+10000;
+				if(damage<10000)totalDmg = 5000;
+				else totalDmg = damage+5000;
 				Battle.setWeaponInfo("knife","damage",totalDmg);
-				document.getElementById("sharpen-knife-gold").innerHTML = tools.scissorsSharpenPrice(totalDmg);
-				UI.addLog("Now your knife deals <b>"+totalDmg+"</b> damage.");
+				document.getElementById("sharpen-knife-gold").innerHTML = tools.knifeSharpenPrice(totalDmg);
+				UI.addLog("Your knife now deals <b>"+totalDmg+"</b> damage.");
 				UI.update();
 			}
 			else { alert('Not enough gold!'); }
@@ -685,7 +695,7 @@ var Player = {
 			Player.move(x,y);
 		}
 		else if(what=="pizzas") {
-			if(!Player.tookPizzas) {
+			if(!Player.save.tookPizzas) {
 				Player.addItem("pizza", 10);
 				UI.addLog("Your took 10 pizzas.");
 				Player.save.tookPizzas = true;
@@ -893,22 +903,25 @@ scroll='   _____________________________________________\n\
 			else { alert('You already have the armor!'); }
 		}
 		else if(what=="potion") {
-			var numpotions = prompt("How many blue heart potions do you want to craft?", "1");
-			numpotions = parseInt(Math.abs(Math.round(numpotions)));
-			if(isNaN(numpotions) || numpotions<1) numpotions = 1;
-			if(confirm("Are you sure to craft "+numpotions+" blue heart potion(s)?")) {
-				if(Player.numItems("heart") >= numpotions) {
-					if(Player.numItems("s_heart") >= numpotions) {
-						Player.removeItem("heart", numpotions);
-						Player.removeItem("s_heart", numpotions);
-						Player.save.hp += 500000 * numpotions;
-						Player.save.maxhp += 500000 * numpotions;
-						UI.addLog("You drank <b>"+numpotions+"</b> blue heart potion(s) and now you have <b>"+Player.save.maxhp+"</b> max HP!");
+			if(tools.arrayContains(Player.save.inventory.body, "dragon-armor")) {
+				var numpotions = prompt("How many blue heart potions do you want to craft?", "1");
+				numpotions = parseInt(Math.abs(Math.round(numpotions)));
+				if(isNaN(numpotions) || numpotions<1) numpotions = 1;
+				if(confirm("Are you sure to craft "+numpotions+" blue heart potion(s)?")) {
+					if(Player.numItems("heart") >= numpotions) {
+						if(Player.numItems("s_heart") >= numpotions) {
+							Player.removeItem("heart", numpotions);
+							Player.removeItem("s_heart", numpotions);
+							Player.save.hp += 500000 * numpotions;
+							Player.save.maxhp += 500000 * numpotions;
+							UI.addLog("You drank <b>"+numpotions+"</b> blue heart potion(s) and now you have <b>"+Player.save.maxhp+"</b> max HP!");
+						}
+						else { alert('You don\'t have enough sparkling heart!'); }
 					}
-					else { alert('You don\'t have enough sparkling heart!'); }
+					else { alert('You don\'t have enough blue heart!'); }
 				}
-				else { alert('You don\'t have enough blue heart!'); }
 			}
+			else { alert('You don\'t have a dragon armor!'); }
 		}
 		UI.update();
 	}

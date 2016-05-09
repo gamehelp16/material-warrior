@@ -61,8 +61,8 @@
 		<img src="images/1f61b.png" class="drawer-image">
 		<span class="mdl-layout-title">Material Warrior</span>
 		<nav class="mdl-navigation">
+		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('keyboard')"><i class="material-icons">keyboard</i><span>Keyboard Shortcuts</span></a>
 		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('settings')"><i class="material-icons">settings</i><span>Settings</span></a>
-		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('keyboard')"><i class="material-icons">help</i><span>Keyboard Shortcuts</span></a>
 		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('about')"><i class="material-icons">help</i><span>About</span></a>
 		</nav>
 	  </div>
@@ -102,7 +102,7 @@
 				</div>
 			</div>
 			
-			<div id="no-ads" style="display:none;">It would be appreciated if you disable AdBlock for this site :)</div>
+			<div id="no-ads" style="display:none;"></div>
 			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 			<!-- Material Warrior -->
 			<ins class="adsbygoogle"
@@ -225,6 +225,21 @@
 		</div>
 	</div>
 	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-save-code">
+		<div class="dialog-inner">
+			<div class="dialog-title">Save the code somewhere save!</div>
+			<div class="dialog-content">
+				<textarea id="save-code-textarea" readonly="readonly" onfocus="this.select();" onmouseup="return false;"></textarea>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert();">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-about">
 		<div class="dialog-inner">
 			<div class="dialog-title">About this game</div>
@@ -238,7 +253,7 @@
 				
 				Subreddit: <a href="https://www.reddit.com/r/materialwarrior" target="_blank">/r/materialwarrior</a><br>
 				GitHub Repo: <a href="https://github.com/gamehelp16/material-warrior" target="_blank">https://github.com/gamehelp16/material-warrior</a><br>
-				Game Version: 1.0<br><br>
+				Game Version: 1.1 (<a href="https://github.com/gamehelp16/material-warrior/blob/gh-pages/README.md" target="_blank">view changelog</a>)<br><br>
 				
 				Check out my other (older) games:<br>
 				<a href="http://gamehelp16.github.io/thegoldfactory/" target="_blank">The Gold Factory</a><br>
@@ -259,7 +274,7 @@
 			<div class="dialog-content" style="max-height: 300px; overflow-y: auto;">
 				This game has keyboard shortcuts for battle actions:<br>
 				Press <b>Z</b> to attack.<br>
-				Press <b>X</b> to run away.<br> <!-- scaredy cat! -->
+				<!-- Press <b>X</b> to run away.<br>  scaredy cat! -->
 				Press <b>C</b> to eat apple (you can't eat apple while attacking).
 				<div id="more-shortcuts" style="display:none;">
 					Press <b>V</b> to shoot using infinity gun.<br><br>
@@ -326,10 +341,10 @@
 		<div class="dialog-inner">
 			<div class="dialog-title">The Shop</div>
 			<div class="dialog-content">
-				<div id="buy-scissors"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('scissors')">BUY SCISSORS</button> <span class="button-text">(<b>5</b> gold)</span></div>
-				<div id="buy-knife"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('knife')">BUY A KNIFE</button> <span class="button-text">(<b>20</b> gold)</span></div>
-				<div id="buy-apple"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('apple')">BUY AN APPLE</button> <span class="button-text">(<b>10</b> gold)</span></div>
-				<div id="buy-apple-10"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('apple-10')">BUY 10 APPLES</button> <span class="button-text">(<b>100</b> gold)</span></div>
+				<div id="buy-scissors"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('scissors')">BUY SCISSORS</button> <span class="button-text">(<b>7</b> gold)</span></div>
+				<div id="buy-knife"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('knife')">BUY A KNIFE</button> <span class="button-text">(<b>25</b> gold)</span></div>
+				<div id="buy-apple"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('apple')">BUY AN APPLE</button> <span class="button-text">(<b>50</b> gold)</span></div>
+				<div id="buy-apple-10"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('apple-10')">BUY 10 APPLES</button> <span class="button-text">(<b>475</b> gold)</span></div>
 				<br>To equip a weapon, open the inventory tab and click the text "fists". Then choose a weapon from the dropdown menu.
 			</div>
 		</div>
@@ -348,6 +363,7 @@
 			<div class="dialog-content">
 				We only sell items made purely with MS Paint.<br>
 				Don't forget to use the items you bought!<br><br>
+				<div id="buy-headphones"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('headphones')">BUY A PAIR OF HEADPHONES</button> <span class="button-text">(<b>75</b> gold)</span></div>
 				<div id="buy-magic-hat"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('magic-hat')">BUY MAGIC HAT</button> <span class="button-text">(<b>750</b> gold)</span></div>
 				<div id="buy-heart-armor"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('heart-armor')">BUY HEART ARMOR</button> <span class="button-text">(<b>100000</b> gold)</span></div>
 			</div>
@@ -392,9 +408,9 @@
 			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.attack()" id="attack-button">
 				ATTACK!
 			</button>
-			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.run()" id="run-away">
+			<!--button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.run()" id="run-away">
 				RUN AWAY
-			</button>
+			</button-->
 			<div style="float:left">
 				<div id="eat-apple-div" style="height:36px;">
 					<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.eatApple()" id="eat-apple" style="margin-left:2px;">
@@ -573,7 +589,7 @@
 			<div class="dialog-content" id="temple-content">
 				<div id="temple-armor" style="display:none;">Dragon skins make a really good armor, you can craft one if you have enough of these skins. Your knife also needs to have at least 50000 damage so we can use it to cut the dragon skin.</div>
 				<div id="temple-gun" style="display:none;">It is said that this gun is only available for purchase from the developer himself. To do so, open your browser's developer console (open the "keyboard shortcuts" section to see how) and type in this command: <span style="font-family:monospace;color:#0f0;background:black;">developer.shop()</span></div>
-				<div id="temple-potion" style="display:none;">Did you know that turning a blue heart into a potion gives you more max HP than the blue heart itself? To make a blue heart potion, you need a blue heart (obviously) and a shiny heart.</div>
+				<div id="temple-potion" style="display:none;">Did you know that turning a blue heart into a potion gives you more max HP than the blue heart itself? To make a blue heart potion, you need a blue heart (obviously) and a shiny heart, also you have to have a dragon armor to make it.</div>
 			</div>
 		</div>
 		<div class="dialog-actions">

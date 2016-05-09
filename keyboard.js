@@ -35,7 +35,7 @@ var keyboard = {
 			if(Battle.ongoing!="none")document.getElementById("attack-button").click();
 		}
 		else if(vk=="VK_X") {
-			if(Battle.ongoing!="none")document.getElementById("run-away").click();
+			//if(Battle.ongoing!="none")document.getElementById("run-away").click();
 		}
 		else if(vk=="VK_C") {
 			if(Battle.ongoing!="none")document.getElementById("eat-apple").click();

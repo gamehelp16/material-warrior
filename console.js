@@ -95,7 +95,7 @@ var console2 = { //so it does not crash with the existing console command
 				if(Game.noise.get(i/10,j/10) > .2 && j>=70 && j<=80)bgColor = Game.grassColor;
 				
 				if(i==Player.save.x&&j==Player.save.y) style.push(styles.tile("@", bgColor));
-				else if(Game.getEntity(i,j)!==undefined) style.push(styles.tile(Game.getEntity(i,j).ascii, bgColor));
+				else if(Game.getEntity(i,j)!==undefined) style.push(styles.tile(Game.getEntityAscii(i,j), bgColor));
 				else if(Game.getTile(i,j)!==undefined) {
 					var tile = Game.getTile(i,j).c;
 					if(tile=="W") bgColor = Game.waterColor;
@@ -129,7 +129,7 @@ var styles = {
 	"error": "color:red;",
 	"tile": function(ascii, bgColor) {
 		var pos = Game.tileMap[ascii];
-		return "background: url(\"images/sprite.png\") -" + pos[0] + "px -" + pos[1] + "px " + bgColor + "; font-size: 23px;";
+		return "background: url(\"http://gamehelp16.github.io/material-warrior/images/sprite.png\") -" + pos[0] + "px -" + pos[1] + "px " + bgColor + "; font-size: 23px;";
 	},
 	"console": "font-family:monospace;color:#0f0;background:black;",
 }
@@ -185,6 +185,7 @@ var developer = {
 						Player.addItem("gun", 1);
 						Player.save.gold -= 15000000;
 						console.log("There you have it!");
+						UI.addLog("You bought an infinity gun.");
 					}
 					else console.log("%cNot enough gold!", styles.error);
 				}

@@ -13,7 +13,6 @@ var Game = {
 	"mapheight": 350,
 	"screenwidth": 28,
 	"screenheight": 14,
-	"fromscratch": true,
 	"grid": {},
 	"display": "",
 	"noise": "",
@@ -173,6 +172,7 @@ var Game = {
 			Game.drawTiles();
 			UI.update();
 			UI.toggleMapinfo();
+			UI.addLog("Use WASD / arrow keys to move, bump objects to interact.");
 			UI.addLog("You spawned in this world.");
 			Player.regen();
 			console2.start();
@@ -197,6 +197,7 @@ var Game = {
 	saveGame: function(asText, alertConfirm) {
 	
 		var stringtosave = {
+			"version": "1.1",
 			"game": JSON.stringify(Game.save),
 			"player": JSON.stringify(Player.save, function(key, value) { return value == Infinity ? "Infinity" : value; }),
 			"damage": [Battle.getWeaponInfo("fists").damage, Battle.getWeaponInfo("scissors").damage, Battle.getWeaponInfo("knife").damage, Battle.getWeaponInfo("hammer").damage]
@@ -207,7 +208,10 @@ var Game = {
 			if(alertConfirm) alert('Game saved!');
 		}
 		else {
-			prompt("Save the code somewhere safe!", btoa(JSON.stringify(stringtosave)));
+			//prompt("Save the code somewhere safe!", btoa(JSON.stringify(stringtosave)));
+			UI.hideAlertFast();
+			UI.showAlert("save-code");
+			document.getElementById("save-code-textarea").innerHTML = btoa(JSON.stringify(stringtosave));
 		}
 		
 	},
@@ -228,7 +232,6 @@ var Game = {
 			if(localStorage.materialwarriorsave !== undefined && localStorage.materialwarriorsave != "") {
 				savedstring = JSON.parse(atob(localStorage.materialwarriorsave));
 				Game.applySave(savedstring);
-				Game.fromscratch = false;
 			}
 			Game.init();
 		}
@@ -241,10 +244,23 @@ var Game = {
 		Player.save = JSON.parse(savedstring['player'], function (key, value) { return value === "Infinity" ? Infinity : value; });
 		weaponDamage = savedstring['damage'];
 		
-		Battle.setWeaponInfo("fists", "damage", weaponDamage[0]);
-		Battle.setWeaponInfo("scissors", "damage", weaponDamage[1]);
-		Battle.setWeaponInfo("knife", "damage", weaponDamage[2]);
-		Battle.setWeaponInfo("hammer", "damage", weaponDamage[3]);
+		for(i in Game.save.entities) {
+			entityName = Game.save.entities[i].name;
+			if(Game.entityCount[entityName]!==undefined)Game.entityCount[entityName]++;
+			
+			if(Game.save.entities[i].type !== undefined) {
+				delete Game.save.entities[i].type;
+				delete Game.save.entities[i].ascii;
+				delete Game.save.entities[i].displayName;
+			}
+		}
+		
+		var minDamage = [Battle.getWeaponInfo("fists").damage, Battle.getWeaponInfo("scissors").damage, Battle.getWeaponInfo("knife").damage, Battle.getWeaponInfo("hammer").damage];
+		
+		Battle.setWeaponInfo("fists", "damage", Math.max(weaponDamage[0], minDamage[0]));
+		Battle.setWeaponInfo("scissors", "damage", Math.max(weaponDamage[1], minDamage[1]));
+		Battle.setWeaponInfo("knife", "damage", Math.max(weaponDamage[2], minDamage[2]));
+		Battle.setWeaponInfo("hammer", "damage", Math.max(weaponDamage[3], minDamage[3]));
 		
 	},
 	
@@ -286,7 +302,7 @@ var Game = {
 	
 	addEnemy: function(x,y,name) {
 		var enemyInfo = Battle.getEnemyInfo(name);
-		Game.save.entities[x+","+y] = {"name":name, "hp":enemyInfo.maxhp, "type":enemyInfo.type, "ascii":enemyInfo.ascii, "displayName": enemyInfo.name};
+		Game.save.entities[x+","+y] = {"name":name, "hp":enemyInfo.maxhp};
 		if(Game.entityCount[name]!=='undefined')Game.entityCount[name]++;
 		UI.update();
 	},
@@ -395,8 +411,8 @@ var Game = {
 		}
 		
 		for(j=-1;j<=Game.mapheight+1;j++) { //generate barriers
-				Game.addTile(-1,j,false,"B");
-				Game.addTile(Game.mapwidth+1,j,false,"B");
+			Game.addTile(-1,j,false,"B");
+			Game.addTile(Game.mapwidth+1,j,false,"B");
 		}
 		
 		for(j=-7;j<=Game.mapheight+7;j++) {
@@ -494,6 +510,8 @@ var Game = {
 					
 					if(j>=12 && j<=18 && i>=50 && i<=55)Game.addBlank(i,j); //generate blank space
 					if(j>=39 && j<=45 && i>=22 && i<=28)Game.addBlank(i,j); //generate blank space
+					if(j>=39 && j<=45 && i>=22 && i<=28)Game.addBlank(i,j); //generate blank space
+					if(j>=42 && j<=47 && i>=75 && i<=80)Game.addBlank(i,j); //generate blank space
 					if(j>=95 && j<=99 && i>=40 && i<=60)Game.addBlank(i,j); //generate blank space
 					if(j>=111 && j<=113 && i>=40 && i<=60)Game.addBlank(i,j); //generate blank space
 					if(j>=114 && j<=119 && i>=47 && i<=53)Game.addBlank(i,j); //generate blank space
@@ -629,6 +647,8 @@ var Game = {
 		Game.addTile(51,116,false,"TC");
 		Game.addTile(50,118,false,"MS");
 		
+		Game.addTile(78,45,false,"MS");
+		
 		Game.addTile(48,260,false,"P");
 		Game.addTile(52,259,false,"B");
 		Game.addTile(52,261,false,"B");
@@ -671,75 +691,7 @@ var Game = {
 			
 		*/
 		
-		if(Game.fromscratch) {
-		
-			Game.addEntity(0,116,"package");
-			
-			Game.addEnemy(48,99,"alien");
-			Game.addEnemy(49,99,"alien");
-			Game.addEnemy(50,99,"alien");
-			Game.addEnemy(51,99,"alien");
-			Game.addEnemy(52,99,"alien");
-			
-			Game.addEnemy(48,111,"alien");
-			Game.addEnemy(49,111,"alien");
-			Game.addEnemy(50,111,"alien");
-			Game.addEnemy(51,111,"alien");
-			Game.addEnemy(52,111,"alien");
-			
-			Game.addEntity(25,42,"package");
-			Game.addEnemy(26,42,"goat");
-			
-			Game.addEnemy(51,260,"dragon");
-			Game.addEntity(52,260,"package");
-			
-			Game.addEntity(startx+20,188,"package");
-			
-			Game.addEnemy(-198,-195,"alien3");
-			Game.addEnemy(-202,-195,"alien3");
-			Game.addEnemy(-198,-194,"alien3");
-			Game.addEnemy(-202,-194,"alien3");
-			Game.addEnemy(-197,-193,"alien3");
-			Game.addEnemy(-203,-193,"alien3");
-			Game.addEnemy(-197,-192,"alien3");
-			Game.addEnemy(-203,-192,"alien3");
-			Game.addEnemy(-196,-191,"alien3");
-			Game.addEnemy(-204,-191,"alien3");
-			Game.addEnemy(-196,-190,"alien3");
-			Game.addEnemy(-204,-190,"alien3");
-			
-			Game.addEnemy(-204,-189,"alien3");
-			Game.addEnemy(-203,-189,"alien3");
-			Game.addEnemy(-202,-189,"alien3");
-			Game.addEnemy(-201,-189,"alien3");
-			Game.addEnemy(-200,-189,"alien3");
-			Game.addEnemy(-199,-189,"alien3");
-			Game.addEnemy(-198,-189,"alien3");
-			Game.addEnemy(-197,-189,"alien3");
-			Game.addEnemy(-196,-189,"alien3");
-			
-			Game.addEnemy(-202,-187,"alien3");
-			Game.addEnemy(-198,-187,"alien3");
-			Game.addEnemy(-202,-185,"alien3");
-			Game.addEnemy(-198,-185,"alien3");
-			Game.addEnemy(-202,-183,"alien3");
-			Game.addEnemy(-198,-183,"alien3");
-			Game.addEnemy(-202,-181,"alien3");
-			Game.addEnemy(-198,-181,"alien3");
-			Game.addEnemy(-202,-179,"alien3");
-			Game.addEnemy(-198,-179,"alien3");
-			Game.addEnemy(-202,-177,"alien3");
-			Game.addEnemy(-198,-177,"alien3");
-			Game.addEnemy(-202,-175,"alien3");
-			Game.addEnemy(-198,-175,"alien3");
-			Game.addEnemy(-202,-173,"alien3");
-			Game.addEnemy(-198,-173,"alien3");
-			
-			Game.addEnemy(-200,-173,"alien3");
-			
-			Game.addEnemy(-200,-175,"boss"); // a poop emoji is mandatory, right?
-			
-		}
+		if(Object.keys(Game.save.entities).length === 0 && JSON.stringify(Game.save.entities) === JSON.stringify({})) Game.generateACrapTonOfEntities(startx);
 		
 		Game.addTile(-202,-201,true,"SA");
 		Game.addTile(-202,-200,true,"SA");
@@ -791,6 +743,76 @@ var Game = {
 			Game.addTile(50,115,true,"TP");
 			Game.addTile(50,263,true,"TP");
 		}
+		
+	},
+	
+	generateACrapTonOfEntities: function(startx) {
+		
+		Game.addEntity(0,116,"package");
+		
+		Game.addEnemy(48,99,"alien");
+		Game.addEnemy(49,99,"alien");
+		Game.addEnemy(50,99,"alien");
+		Game.addEnemy(51,99,"alien");
+		Game.addEnemy(52,99,"alien");
+		
+		Game.addEnemy(48,111,"alien");
+		Game.addEnemy(49,111,"alien");
+		Game.addEnemy(50,111,"alien");
+		Game.addEnemy(51,111,"alien");
+		Game.addEnemy(52,111,"alien");
+		
+		Game.addEntity(25,42,"package");
+		Game.addEnemy(26,42,"goat");
+		
+		Game.addEnemy(51,260,"dragon");
+		Game.addEntity(52,260,"package");
+		
+		Game.addEntity(startx+20,188,"package");
+		
+		Game.addEnemy(-198,-195,"alien3");
+		Game.addEnemy(-202,-195,"alien3");
+		Game.addEnemy(-198,-194,"alien3");
+		Game.addEnemy(-202,-194,"alien3");
+		Game.addEnemy(-197,-193,"alien3");
+		Game.addEnemy(-203,-193,"alien3");
+		Game.addEnemy(-197,-192,"alien3");
+		Game.addEnemy(-203,-192,"alien3");
+		Game.addEnemy(-196,-191,"alien3");
+		Game.addEnemy(-204,-191,"alien3");
+		Game.addEnemy(-196,-190,"alien3");
+		Game.addEnemy(-204,-190,"alien3");
+		
+		Game.addEnemy(-204,-189,"alien3");
+		Game.addEnemy(-203,-189,"alien3");
+		Game.addEnemy(-202,-189,"alien3");
+		Game.addEnemy(-201,-189,"alien3");
+		Game.addEnemy(-200,-189,"alien3");
+		Game.addEnemy(-199,-189,"alien3");
+		Game.addEnemy(-198,-189,"alien3");
+		Game.addEnemy(-197,-189,"alien3");
+		Game.addEnemy(-196,-189,"alien3");
+		
+		Game.addEnemy(-202,-187,"alien3");
+		Game.addEnemy(-198,-187,"alien3");
+		Game.addEnemy(-202,-185,"alien3");
+		Game.addEnemy(-198,-185,"alien3");
+		Game.addEnemy(-202,-183,"alien3");
+		Game.addEnemy(-198,-183,"alien3");
+		Game.addEnemy(-202,-181,"alien3");
+		Game.addEnemy(-198,-181,"alien3");
+		Game.addEnemy(-202,-179,"alien3");
+		Game.addEnemy(-198,-179,"alien3");
+		Game.addEnemy(-202,-177,"alien3");
+		Game.addEnemy(-198,-177,"alien3");
+		Game.addEnemy(-202,-175,"alien3");
+		Game.addEnemy(-198,-175,"alien3");
+		Game.addEnemy(-202,-173,"alien3");
+		Game.addEnemy(-198,-173,"alien3");
+		
+		Game.addEnemy(-200,-173,"alien3");
+		
+		Game.addEnemy(-200,-175,"boss"); // a poop emoji is mandatory, right?
 		
 	},
 	
@@ -860,7 +882,7 @@ var Game = {
 				}
 				else Game.display.draw(k, l, " ", "transparent", bgColor);
 				
-				if(Game.getEntity(i,j)!==undefined) Game.display.draw(k, l, Game.getEntity(i,j).ascii, "transparent", bgColor);
+				if(Game.getEntity(i,j)!==undefined) Game.display.draw(k, l, Game.getEntityAscii(i,j), "transparent", bgColor);
 				
 				if(i==Player.save.x&&j==Player.save.y) Game.display.draw(k, l, "@", "transparent", bgColor);
 				
@@ -877,6 +899,13 @@ var Game = {
 	
 	getEntity: function(x,y) {
 		return Game.save.entities[x+","+y];
+	},
+	
+	getEntityAscii: function(x,y) {
+		if(Battle.getEnemyInfo(Game.save.entities[x+","+y].name) !== undefined) {
+			return Battle.getEnemyInfo(Game.save.entities[x+","+y].name).ascii;
+		}
+		else return Game.save.entities[x+","+y].ascii;
 	},
 	
 	getEntityInfo: function(name) {

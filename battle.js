@@ -9,9 +9,9 @@ var Battle = {
 			"ascii": "R",
 			"emoji": "1f400",
 			"type": "hostile",
-			"maxhp": 5,
-			"damage": [1,2],
-			"gold": [1,3],
+			"maxhp": 12,
+			"damage": [1,3],
+			"gold": [2,3],
 			"timeout": [2000,2000]
 		},
 		
@@ -33,8 +33,8 @@ var Battle = {
 			"ascii": "CM1",
 			"emoji": "1f42a",
 			"type": "hostile",
-			"maxhp": 10,
-			"damage": [1,5],
+			"maxhp": 25,
+			"damage": [2,4],
 			"gold": [5,10],
 			"timeout": [2500,3000]
 		},
@@ -45,8 +45,8 @@ var Battle = {
 			"ascii": "CM2",
 			"emoji": "1f42b",
 			"type": "hostile",
-			"maxhp": 13,
-			"damage": [1,6],
+			"maxhp": 30,
+			"damage": [4,6],
 			"gold": [7,17],
 			"timeout": [2000,2500]
 		},
@@ -57,8 +57,8 @@ var Battle = {
 			"ascii": "A",
 			"emoji": "1f47e",
 			"type": "hostile",
-			"maxhp": 15,
-			"damage": [3,5],
+			"maxhp": 30,
+			"damage": [2,3],
 			"gold": [40,50],
 			"timeout": [1000,2000]
 		},
@@ -69,8 +69,8 @@ var Battle = {
 			"ascii": "SN",
 			"emoji": "1f40d",
 			"type": "hostile",
-			"maxhp": 350,
-			"damage": [150,200],
+			"maxhp": 400,
+			"damage": [50,100],
 			"gold": [200,400],
 			"timeout": [1500,2000]
 		},
@@ -81,8 +81,8 @@ var Battle = {
 			"ascii": "G",
 			"emoji": "1f402",
 			"type": "hostile",
-			"maxhp": 1000,
-			"damage": [400,500],
+			"maxhp": 3000,
+			"damage": [100,200],
 			"gold": [1000,1750],
 			"timeout": [1000,2000]
 		},
@@ -93,10 +93,10 @@ var Battle = {
 			"ascii": "D",
 			"emoji": "1f409",
 			"type": "hostile",
-			"maxhp": 20000,
-			"damage": [800,1200],
+			"maxhp": 70000,
+			"damage": [200,400],
 			"gold": [10000,20000],
-			"timeout": [1500,2500]
+			"timeout": [2000,3000]
 		},
 		
 		"ghost": {
@@ -198,14 +198,14 @@ var Battle = {
 			"name": "scissors",
 			"image": "2702",
 			"description": "Although it is weird to use scissors as a weapon, at least it works.",
-			"damage": 2, //2
+			"damage": 5, //5
 		},
 		
 		"knife": {
 			"name": "knife",
 			"image": "1f52a",
 			"description": "A basic kitchen knife that has been specifically modified to suit all your killing needs.",
-			"damage": 5, //5
+			"damage": 10, //10
 		},
 		
 		"hammer": {
@@ -226,11 +226,18 @@ var Battle = {
 			"reduction": 0, //0
 		},
 		
+		"headphones": {
+			"name": "headphones",
+			"image": "headphones",
+			"description": "This pair of headphones can absorb much more damage against camels.",
+			"reduction": 7, //7
+		},
+		
 		"magic-hat": {
 			"name": "magic hat",
 			"image": "magichat",
 			"description": "This hat is mostly just for style, but at least it protects you a little bit.",
-			"reduction": 10, //10
+			"reduction": 20, //20
 		}
 		
 	},
@@ -248,14 +255,14 @@ var Battle = {
 			"name": "heart armor",
 			"image": "heartarmor",
 			"description": "This lovely piece of armor heals you each time you attack an enemy.",
-			"reduction": 15, //15
+			"reduction": 35, //35
 		},
 		
 		"dragon-armor": {
 			"name": "dragon armor",
 			"image": "1f455",
 			"description": "This armor is disguised as a normal t-shirt, but don't be deceived by it's look.",
-			"reduction": 50, //50
+			"reduction": 45, //45
 		}
 		
 	},
@@ -293,7 +300,7 @@ var Battle = {
 		else if(Battle.ongoing=="none") {
 		
 			var enemy = Game.getEntity(x,y);
-			var enemyInfo = Battle.enemies[enemy.name];
+			var enemyInfo = Battle.getEnemyInfo(enemy.name);
 			Game.resetEntityHp(x,y);
 			Battle.ongoing = x+","+y;
 			Player.isStunned = false;
@@ -302,7 +309,7 @@ var Battle = {
 			document.getElementById("attack-button").disabled = false;
 			document.getElementById("eat-apple").disabled = false;
 			
-			document.getElementById("battle-title").innerHTML = tools.upperFirst(enemyInfo.article)+" "+tools.upperFirst(enemy.displayName)+"!";
+			document.getElementById("battle-title").innerHTML = tools.upperFirst(enemyInfo.article)+" "+tools.upperFirst(enemyInfo.name)+"!";
 			document.getElementById("enemy-img").src = "images/"+enemyInfo.emoji+".png";
 			
 			if(enemy.name=="ghost")document.getElementById("enemy-special").innerHTML = "<br>Absorbs 75% damage";
@@ -311,6 +318,7 @@ var Battle = {
 			
 			document.getElementById("enemy-hp").innerHTML = enemy.hp;
 			document.getElementById("enemy-maxhp").innerHTML = enemyInfo.maxhp;
+			if(enemyInfo.maxhp >= 1000000000000) document.getElementById("enemy-maxhp").innerHTML = "a lot";
 			document.getElementById("enemy-damage").innerHTML = enemyInfo.damage[1];
 			document.getElementById("enemy-bar").style.width = 72+"px";
 			document.getElementById("enemy-bullet").style.display = "none";
@@ -318,14 +326,15 @@ var Battle = {
 			var selectedWeapon = Battle.getWeaponInfo(Player.getWeapon());
 			document.getElementById("player-hp").innerHTML = Player.save.hp;
 			document.getElementById("player-maxhp").innerHTML = Player.save.maxhp;
+			if(Player.save.maxhp >= 1000000000000) document.getElementById("player-maxhp").innerHTML = "a lot";
 			document.getElementById("player-weapon").innerHTML = tools.upperFirst(selectedWeapon.name);
 			document.getElementById("player-damage").innerHTML = selectedWeapon.damage;
 			document.getElementById("player-bar").style.width = Player.save.hp/Player.save.maxhp*72+"px";
 			document.getElementById("player-img").style.opacity = 1;
 			document.getElementById("player-bar").style.opacity = 1;
 			
-			if(enemy.displayName=="ghost") {
-				Player.heart = Math.round(Player.save.hp/20);
+			if(enemyInfo.name=="ghost") {
+				Player.heart = Math.round(Player.save.hp/100);
 				if(Player.heart>7) Player.heart = 7;
 				Player.initialHp = Player.save.hp;
 				document.getElementById("player-hp-text").style.display = "none";
@@ -403,6 +412,9 @@ var Battle = {
 								var thedamage = tools.getRandomInt(enemyInfo.damage[0],enemyInfo.damage[1]);
 								var reduction = Battle.getHeadInfo(Player.save.head).reduction + Battle.getBodyInfo(Player.save.body).reduction;
 								if(reduction>100)reduction = 100;
+								
+								if(Player.save.head=="headphones" && (enemy.name=="camel1" || enemy.name=="camel2")) reduction = 50;
+								
 								thedamage -= Math.round(reduction/100 * thedamage);
 								Player.save.hp -= thedamage;
 								UI.showDamage(10,10,"player-anim","<span style='color:red;'>-"+thedamage+"</span>");
@@ -414,7 +426,7 @@ var Battle = {
 					document.getElementById("player-bar").style.width = Player.save.hp/Player.save.maxhp*72+"px";
 					if(Player.save.hp<=0) {
 						Player.save.hp = 0;
-						UI.addLog("You are killed by "+enemyInfo.article+" "+enemy.displayName+".");
+						UI.addLog("You are killed by "+enemyInfo.article+" "+enemyInfo.name+".");
 						document.getElementById("player-hp").innerHTML = document.getElementById("player-hp-stats").innerHTML = 0;
 						Battle.run();
 						Player.respawn();
@@ -460,8 +472,8 @@ var Battle = {
 						UI.showDamage(20,20,"enemy-anim","<span style='color:red;'>miss</span>");
 					}
 					else {
-						var thedamage = Math.round(tools.getRandomInt(3/4 * selectedWeapon.damage,selectedWeapon.damage));
-						if(enemy.displayName=="ghost")thedamage -= Math.round(3/4 * thedamage);
+						var thedamage = Math.min(Math.round(tools.getRandomInt(3/4 * selectedWeapon.damage, selectedWeapon.damage)), selectedWeapon.damage);
+						if(enemyInfo.name=="ghost")thedamage -= Math.round(3/4 * thedamage);
 						enemy.hp -= thedamage;
 						UI.showDamage(20,20,"enemy-anim","<span style='color:red;'>-"+thedamage+"</span>");
 					}
@@ -472,7 +484,7 @@ var Battle = {
 							if(Player.save.hp+healed>Player.save.maxhp) {
 								healed = Player.save.maxhp - Player.save.hp;
 							}
-							Player.save.hp += healed
+							Player.save.hp += healed;
 							UI.showDamage(10,10,"player-anim","<span style='color:green;'>+"+healed+"</span>");
 							document.getElementById("player-hp").innerHTML = document.getElementById("player-hp-stats").innerHTML = Player.save.hp;
 							document.getElementById("player-bar").style.width = Player.save.hp/Player.save.maxhp*72+"px";
@@ -567,35 +579,35 @@ var Battle = {
 		var enemyInfo = Battle.enemies[enemy.name];
 		
 		if(enemy.name=="ghost") {
-			UI.addLog("The "+enemy.displayName+" drops a shiny heart.");
+			UI.addLog("The "+enemyInfo.name+" drops a shiny heart.");
 			Game.removeEntity(x,y);
 			Game.addEntity(x,y,"s_heart");
 		}
 		else if(enemy.name=="dragon") {
 			var loot = tools.getRandomInt(enemyInfo.gold[0], enemyInfo.gold[1])
 			Player.save.gold += loot;
-			UI.addLog("You killed "+enemyInfo.article+" "+enemy.displayName+" for <b>"+loot+"</b> gold and got a dragon corpse.");
+			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>"+loot+"</b> gold and got a dragon corpse.");
 			Game.removeEntity(x,y);
 			Player.addItem("dragon-corpse", 1);
 		}
 		else if(enemy.name=="boss") {
 			var loot = tools.getRandomInt(enemyInfo.gold[0], enemyInfo.gold[1])
 			Player.save.gold += loot;
-			UI.addLog("You killed "+enemyInfo.article+" "+enemy.displayName+" for <b>"+loot+"</b> gold!");
+			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>"+loot+"</b> gold!");
 			UI.addLog("Or not?");
 			Game.removeEntity(x,y);
 			Game.addEnemy(x,y,"boss2");
 		}
 		else if(enemy.name=="boss2") {
 			Player.save.gold = Infinity;
-			UI.addLog("You killed "+enemyInfo.article+" "+enemy.displayName+" for <b>Infinity</b> gold!");
+			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>Infinity</b> gold!");
 			Game.removeEntity(x,y);
 			Game.addEnemy(x,y,"boss3");
 		}
 		else if(enemy.name=="boss3") {
 			UI.addLog("<b>And don't forget to visit this game's subreddit at <a href=\"https://www.reddit.com/r/materialwarrior\" target=\"_blank\">/r/materialwarrior</a>. Cheers!</b>");
 			UI.addLog("<b>Thank you for playing the game! I hope you enjoyed it! :D</b>");
-			UI.addLog("<b>You killed "+enemyInfo.article+" "+enemy.displayName+" for good!</b>");
+			UI.addLog("<b>You killed "+enemyInfo.article+" "+enemyInfo.name+" for good!</b>");
 			Game.removeEntity(x,y);
 			Player.addItem("cookie", 1);
 			ga('send', 'event', 'winGame', 'Yes');
@@ -603,7 +615,7 @@ var Battle = {
 		else {
 			var loot = tools.getRandomInt(enemyInfo.gold[0], enemyInfo.gold[1])
 			Player.save.gold += loot;
-			UI.addLog("You killed "+enemyInfo.article+" "+enemy.displayName+" for <b>"+loot+"</b> gold.");
+			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>"+loot+"</b> gold.");
 			Game.removeEntity(x,y);
 		}
 		Game.drawTiles();
@@ -618,19 +630,19 @@ var Battle = {
 			clearTimeout(enemyAttackTimeout);
 			Battle.ongoing = "none";
 			if(enemy=="boss") {
-				UI.hideAlertFast('battle');
+				UI.hideAlertFast();
 				UI.chat('penguin3');
 			}
 			else if(enemy=="boss2") {
-				UI.hideAlertFast('battle');
+				UI.hideAlertFast();
 				UI.chat('penguin4');
 			}
 			else if(enemy=="boss3") {
-				UI.hideAlertFast('battle');
+				UI.hideAlertFast();
 				UI.chat('penguin5');
 			}
 			else {
-				UI.hideAlert('battle');
+				UI.hideAlert();
 			}
 		}
 	}

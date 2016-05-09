@@ -5,18 +5,20 @@ var UI = {
 	"optionsOpen": {},
 
 	showAlert: function(dialog) {
-		var duration = 0;
-		document.getElementsByClassName("dialog-"+dialog)[0].style.opacity = document.getElementById("modal").style.opacity = 0;
-		document.getElementsByClassName("dialog-"+dialog)[0].style.display = document.getElementById("modal").style.display = "block";
-		UI.dialogOpen = dialog;
-		var animaton = setInterval(function() {
-			duration += .1;
-			document.getElementsByClassName("dialog-"+dialog)[0].style.opacity = duration;
-			document.getElementById("modal").style.opacity = duration;
-			if(duration>=1) {
-				clearInterval(animaton);
-			}
-		}, 10);
+		if(UI.dialogOpen == "none") {
+			var duration = 0;
+			document.getElementsByClassName("dialog-"+dialog)[0].style.opacity = document.getElementById("modal").style.opacity = 0;
+			document.getElementsByClassName("dialog-"+dialog)[0].style.display = document.getElementById("modal").style.display = "block";
+			UI.dialogOpen = dialog;
+			var animaton = setInterval(function() {
+				duration += .1;
+				document.getElementsByClassName("dialog-"+dialog)[0].style.opacity = duration;
+				document.getElementById("modal").style.opacity = duration;
+				if(duration>=1) {
+					clearInterval(animaton);
+				}
+			}, 10);
+		}
 	},
 	
 	hideAlert: function() {
@@ -159,6 +161,7 @@ var UI = {
 		
 		if(tools.arrayContains(Player.save.inventory.weapon,"scissors"))document.getElementById("buy-scissors").style.display = "none";
 		if(tools.arrayContains(Player.save.inventory.weapon,"knife"))document.getElementById("buy-knife").style.display = "none";
+		if(tools.arrayContains(Player.save.inventory.head,"headphones"))document.getElementById("buy-headphones").style.display = "none";
 		if(tools.arrayContains(Player.save.inventory.head,"magic-hat"))document.getElementById("buy-magic-hat").style.display = "none";
 		if(tools.arrayContains(Player.save.inventory.body,"heart-armor"))document.getElementById("buy-heart-armor").style.display = "none";
 		if(Player.numThings("teleporter") >= 1) document.getElementById("buy-teleporter").style.display = "none";

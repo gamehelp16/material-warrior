@@ -28,13 +28,13 @@ var tools = {
 	},
 	
 	scissorsSharpenPrice: function(damage) {
-		if(damage<100)return 150;
-		else return Math.round(Math.pow(damage/100+1,1.2)*75);
+		if(damage<50)return 150;
+		else return Math.round(Math.pow(damage/50+1,1.2)*75);
 	},
 	
 	knifeSharpenPrice: function(damage) {
 		if(damage<10000)return 18000;
-		else return Math.round(Math.pow(damage/100+1,1.2)*75);
+		else return Math.round(Math.pow(damage/75+1,1.2)*75);
 	},
 	
 	playerHeart: function(heart) {
