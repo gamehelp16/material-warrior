@@ -6,6 +6,9 @@ Play the game here: http://gamehelp16.github.io/material-warrior/
 
 ## Changelog:
 
+**Version 1.1.2 (May 10th 2016)**
+- Knife bug fixed.
+
 **Version 1.1.1 (May 9th 2016)**
 
 - Lowered the price of some items.

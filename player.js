@@ -614,7 +614,7 @@ var Player = {
 			if(Player.save.gold>=tools.knifeSharpenPrice(damage)) {
 				Player.save.gold-=tools.knifeSharpenPrice(damage);
 				var totalDmg = 0;
-				if(damage<10000)totalDmg = 5000;
+				if(damage<5000)totalDmg = 5000;
 				else totalDmg = damage+5000;
 				Battle.setWeaponInfo("knife","damage",totalDmg);
 				document.getElementById("sharpen-knife-gold").innerHTML = tools.knifeSharpenPrice(totalDmg);
