@@ -6,6 +6,7 @@ var UI = {
 
 	showAlert: function(dialog) {
 		if(UI.dialogOpen == "none") {
+			
 			var duration = 0;
 			document.getElementsByClassName("dialog-"+dialog)[0].style.opacity = document.getElementById("modal").style.opacity = 0;
 			document.getElementsByClassName("dialog-"+dialog)[0].style.display = document.getElementById("modal").style.display = "block";
@@ -18,22 +19,32 @@ var UI = {
 					clearInterval(animaton);
 				}
 			}, 10);
+			
+			if(dialog == "xp-system") {
+				document.getElementById("levels-info").innerHTML = "";
+				for(i=0;i<Math.min(Player.getLevel(), Game.levelsDesc.length);i++) {
+					document.getElementById("levels-info").innerHTML += "Level <b>"+(i+1)+"</b>: " + Game.levelsDesc[i] + "<br>";
+				}
+			}
+			
 		}
 	},
 	
 	hideAlert: function() {
-		var duration = 10;
-		var dialog = UI.dialogOpen;
-		var animaton = setInterval(function() {
-			duration--;
-			document.getElementsByClassName("dialog-"+dialog)[0].style.opacity = duration/10;
-			document.getElementById("modal").style.opacity = duration/10;
-			if(duration<=0) {
-				clearInterval(animaton);
-				UI.dialogOpen = "none";
-				document.getElementsByClassName("dialog-"+dialog)[0].style.display = document.getElementById("modal").style.display = "none";
-			}
-		}, 10);
+		if(UI.dialogOpen != "none") {
+			var duration = 10;
+			var dialog = UI.dialogOpen;
+			var animaton = setInterval(function() {
+				duration--;
+				document.getElementsByClassName("dialog-"+dialog)[0].style.opacity = duration/10;
+				document.getElementById("modal").style.opacity = duration/10;
+				if(duration<=0) {
+					clearInterval(animaton);
+					UI.dialogOpen = "none";
+					document.getElementsByClassName("dialog-"+dialog)[0].style.display = document.getElementById("modal").style.display = "none";
+				}
+			}, 10);
+		}
 	},
 	
 	hideAlertFast: function() {
@@ -127,16 +138,16 @@ var UI = {
 		document.getElementById("game-ghosts").innerHTML = Game.getEntityCount("ghost");
 		document.getElementById("game-alien2").innerHTML = Game.getEntityCount("alien2");
 		
-		document.getElementById("player-hp-stats").innerHTML = Player.save.hp;
-		document.getElementById("player-maxhp-stats").innerHTML = Player.save.maxhp;
-		document.getElementById("player-gold").innerHTML = Player.save.gold;
+		document.getElementById("player-hp-stats").innerHTML = tools.num(Player.save.hp);
+		document.getElementById("player-maxhp-stats").innerHTML = tools.num(Player.save.maxhp);
+		document.getElementById("player-gold").innerHTML = tools.num(Player.save.gold);
 		
 		if(Battle.getWeaponInfo("fists").damage>=5)document.getElementById("need-more-power").style.display = "none", document.getElementById("forge-contents").style.display = "block";
 		
 		var selectedWeapon = Battle.getWeaponInfo(Player.save.weapon);
 		document.getElementById("selected-weapon").innerHTML = tools.upperFirst(selectedWeapon.name)+" <i>&#x25BC;</i>";
 		document.getElementById("selected-weapon-desc").innerHTML = selectedWeapon.description;
-		document.getElementById("selected-weapon-damage").innerHTML = "<b>Damage:</b> "+selectedWeapon.damage;
+		document.getElementById("selected-weapon-damage").innerHTML = "<b>Damage:</b> "+tools.num(selectedWeapon.damage);
 		document.getElementById("selected-weapon-image").src = "images/"+selectedWeapon.image+".png";
 		
 		var selectedHead = Battle.getHeadInfo(Player.save.head);
@@ -157,7 +168,7 @@ var UI = {
 		
 		if(Player.save.inventory.item.apple>0)document.getElementById("eat-apple").style.display = "block";
 		else document.getElementById("eat-apple").style.display = "none";
-		document.getElementById("apple-left").innerHTML = Player.save.inventory.item.apple+" left";
+		document.getElementById("apple-left").innerHTML = tools.num(Player.save.inventory.item.apple)+" left";
 		
 		if(tools.arrayContains(Player.save.inventory.weapon,"scissors"))document.getElementById("buy-scissors").style.display = "none";
 		if(tools.arrayContains(Player.save.inventory.weapon,"knife"))document.getElementById("buy-knife").style.display = "none";
@@ -189,7 +200,7 @@ var UI = {
 			var itemInfo = Player.getItemInfo(k);
 			var amount="";
 			if(Player.getInventory().item[k]>0) {
-				if(Player.getInventory().item[k]>1)amount = " x"+Player.getInventory().item[k];
+				if(Player.getInventory().item[k]>1)amount = " x"+tools.num(Player.getInventory().item[k]);
 				document.getElementById("inventory-items").innerHTML += '<div class="mdl-card mdl-shadow--2dp item-card the-item-card">  <div class="mdl-card__title"><span class="item-name no-pointer">'+tools.upperFirst(itemInfo.name)+amount+'</span></div>  <div class="mdl-card__media mdl-card--expand"><img src="images/'+itemInfo.image+'.png"></div>  <div class="mdl-card__supporting-text">'+itemInfo.description+'</div></div>';
 			}
 		}
@@ -199,6 +210,14 @@ var UI = {
 		else document.getElementById("shoot-button").style.display = 'none';
 		
 		if(Player.save.hasSmartphone)document.getElementById("tab-smartphone").style.display = 'block',document.getElementById("buy-smartphone").style.display = 'none';
+		
+		var cXP = Player.getCurrentXP();
+		var mXP = Player.getMaxXP();
+		
+		document.getElementById("player-xp-stats").innerHTML = tools.num(cXP);
+		document.getElementById("player-maxxp-stats").innerHTML = tools.num(mXP);
+		document.getElementById("player-lvl-stats").innerHTML = Player.getLevel();
+		document.getElementById("xp-green").style.width = cXP / mXP * 100 + "%";
 		
 	},
 	
@@ -235,5 +254,26 @@ var UI = {
 	addLog: function(message) {
 		document.getElementById("game-log").innerHTML = message+"<br>"+document.getElementById("game-log").innerHTML;
 	},
+	
+	speedrun: function() {
+	
+		if(Player.numItems("cookie") > 0) {
+			document.getElementById("speedrun-mode").style.display = "block";
+			document.getElementById("record-time").innerHTML = tools.msToTime(Game.speedrunHigh[0]);
+			document.getElementById("speedrun-cookies").innerHTML = Game.speedrunHigh[1];
+			document.getElementById("speedrun-container").style.display = "block";
+			document.getElementById("soft-reset").style.display = "block";
+		}
+		
+		if(Game.speedrun) {
+			document.getElementById("speedrun-on").style.display = "none";
+			document.getElementById("speedrun-off").style.display = "block";
+		}
+		else {
+			document.getElementById("speedrun-on").style.display = "block";
+			document.getElementById("speedrun-off").style.display = "none";
+		}
+		
+	}
 		
 };

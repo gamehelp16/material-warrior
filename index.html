@@ -61,7 +61,9 @@
 		<img src="images/1f61b.png" class="drawer-image">
 		<span class="mdl-layout-title">Material Warrior</span>
 		<nav class="mdl-navigation">
+		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('xp-system')"><i class="material-icons">explore</i><span>Levels &amp; XP</span></a>
 		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('keyboard')"><i class="material-icons">keyboard</i><span>Keyboard Shortcuts</span></a>
+		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('speedrun')" id="speedrun-mode"><i class="material-icons">directions_run</i><span>Speedrun Mode</span></a>
 		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('settings')"><i class="material-icons">settings</i><span>Settings</span></a>
 		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('about')"><i class="material-icons">help</i><span>About</span></a>
 		</nav>
@@ -70,13 +72,27 @@
 	  <main class="mdl-layout__content">
 		<section class="mdl-layout__tab-panel is-active" id="scroll-tab-1">
 		  <div class="page-content">
+		  
+			<div class="mdl-card mdl-shadow--4dp" id="speedrun-container">
+				<div class="mdl-card__supporting-text">
+					<div class="speedrun-time">
+						<div class="speedrun-title">Current Time</div>
+						<div class="speedrun-timer" id="current-time">0:00:00.000</div>
+					</div>
+					<div class="speedrun-time">
+						<div class="speedrun-title">Speedrun Record (<span id="speedrun-cookies">0</span> Cookies)</div>
+						<div class="speedrun-timer" id="record-time">0:00:00.000</div>
+					</div>
+					<div style="clear: both;"></div>
+				</div>
+			</div>
+		  
 			<div class="game-container">
 				<div class="mdl-card mdl-shadow--4dp" style="width:auto">
 				  <div class="mdl-card__media" class="game-card">
 					<div id="mini-mapinfo">
 						<div style="float:left">
 							<span>Seed: <b id="game-seed">0</b></span><br>
-							<span>x: <b id="game-x">0</b> y: <b id="game-y">0</b></span>
 						</div>
 						<div style="float:right; text-align:right;">
 							<span># of rats: <b id="game-rats">0</b></span><br>
@@ -94,8 +110,16 @@
 					<div id="red-effect"></div>
 				  </div>
 				  <div class="mdl-card__supporting-text">
-					<div style="float:left">You have <b id="player-gold">0</b> gold.</div>
-					<div style="float:right; text-align:right;">HP: <b id="player-hp-stats">0</b> / <b id="player-maxhp-stats">0</b></div>
+					<div class="xp-bar"></div>
+					<div class="xp-bar green" id="xp-green" style="width:0%"></div>
+					<div style="float:left; margin-top:7px;">
+						You have <b id="player-gold">0</b> gold.<br>
+						x: <b id="game-x">0</b> y: <b id="game-y">0</b>
+					</div>
+					<div style="float:right; text-align:right; margin-top:7px;">
+						HP: <b id="player-hp-stats">0</b> / <b id="player-maxhp-stats">0</b><br>
+						XP: <b id="player-xp-stats">0</b> / <b id="player-maxxp-stats">0</b> (Level <b id="player-lvl-stats">1</b>)
+					</div>
 					<div style="clear:both;"></div><br>
 					<div id="game-log"></div>
 				  </div>
@@ -210,7 +234,8 @@
 				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.toggleAutosave()">TOGGLE AUTOSAVE</button> <span id="autosave-time" class="button-text"></span><br>
 				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.saveGame(true, false)">EXPORT SAVE AS TEXT</button><br>
 				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.loadGame(true)">IMPORT SAVE FROM TEXT</button><br>
-				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.reset()">RESET GAME</button><br><br>
+				<div id="soft-reset"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.softReset(false)">SOFT RESET</button> <span class="button-text">Resets everything except speedrun record &amp; cookies.</span></div>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Game.reset()">HARD RESET</button> <span style="color:red;" class="button-text">Resets game as if you have never played before.</span><br><br>
 				<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="toggle-mapinfo">
 				  <input type="checkbox" id="toggle-mapinfo" class="mdl-checkbox__input" onclick="UI.toggleMapinfo()">
 				  <span class="mdl-checkbox__label" style="position:relative;top:-2px;">Show map info in game area</span>
@@ -253,7 +278,7 @@
 				
 				Subreddit: <a href="https://www.reddit.com/r/materialwarrior" target="_blank">/r/materialwarrior</a><br>
 				GitHub Repo: <a href="https://github.com/gamehelp16/material-warrior" target="_blank">https://github.com/gamehelp16/material-warrior</a><br>
-				Game Version: 1.1.2 (<a href="https://github.com/gamehelp16/material-warrior/blob/gh-pages/README.md" target="_blank">view changelog</a>)<br><br>
+				Game Version: 1.2 (<a href="https://github.com/gamehelp16/material-warrior/blob/gh-pages/README.md" target="_blank">view changelog</a>)<br><br>
 				
 				Check out my other (older) games:<br>
 				<a href="http://gamehelp16.github.io/thegoldfactory/" target="_blank">The Gold Factory</a><br>
@@ -292,6 +317,39 @@
 					<i>In order to view the console in Safari, you have to enable the "Show Develop menu in menu bar" setting in the "Advanced" pane of Safari's preferences</i><br><br>
 					<a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">Click here for source and more info</a>
 				</div>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-xp-system">
+		<div class="dialog-inner">
+			<div class="dialog-title">Levels &amp; XP</div>
+			<div class="dialog-content" style="max-height: 300px; overflow-y: auto;">
+				Experiences can be gained by killing enemies. Each time you level up you will gain a new ability:<br><br>
+				<div id="levels-info"></div>
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+	
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-speedrun">
+		<div class="dialog-inner">
+			<div class="dialog-title">Speedrun Mode</div>
+			<div class="dialog-content">
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" id="speedrun-on" onclick="Game.activateSpeedrun(true)">TURN ON SPEEDRUN MODE</button>
+				<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" id="speedrun-off" onclick="Game.activateSpeedrun(false)">TURN OFF SPEEDRUN MODE</button><br>
+				Activating speedrun mode will soft reset the game (all progress will be lost except speedrun record and cookies). A timer will start automatically and stops after the game is finished. Turning off speedrun mode won't reset your progress, but you will have to soft reset the game if you want to activate speedrun mode again. Closing the game will turn off the speedrun mode.
 			</div>
 		</div>
 		<div class="dialog-actions">
@@ -365,7 +423,7 @@
 				Don't forget to use the items you bought!<br><br>
 				<div id="buy-headphones"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('headphones')">BUY A PAIR OF HEADPHONES</button> <span class="button-text">(<b>50</b> gold)</span></div>
 				<div id="buy-magic-hat"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('magic-hat')">BUY MAGIC HAT</button> <span class="button-text">(<b>750</b> gold)</span></div>
-				<div id="buy-heart-armor"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('heart-armor')">BUY HEART ARMOR</button> <span class="button-text">(<b>100000</b> gold)</span></div>
+				<div id="buy-heart-armor"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('heart-armor')">BUY HEART ARMOR</button> <span class="button-text">(<b>100,000</b> gold)</span></div>
 			</div>
 		</div>
 		<div class="dialog-actions">
@@ -408,11 +466,28 @@
 			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.attack()" id="attack-button">
 				ATTACK!
 			</button>
-			<!--button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.run()" id="run-away">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.runAway()" id="run-away">
 				RUN AWAY
-			</button-->
+			</button>
+			<div class="mdl-tooltip mdl-tooltip--large" for="run-away" id="run-away-count">
+				? kills left to run away again
+			</div>
 			<div style="float:left">
-				<div id="eat-apple-div" style="height:36px;">
+				<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.shoot()" id="shoot-button">
+					SHOOT
+				</button>
+				<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.dodge()" id="player-dodge">
+					DODGE
+				</button>
+				<div id="throw-gold-div" style="height:36px;">
+					<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.throwGold()" id="throw-gold">
+						THROW GOLD
+					</button>
+				</div>
+				<div class="mdl-tooltip mdl-tooltip--large" for="throw-gold-div" id="throw-price">
+					? gold
+				</div>
+				<div id="eat-apple-div">
 					<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.eatApple()" id="eat-apple" style="margin-left:2px;">
 						EAT APPLE
 					</button>
@@ -420,9 +495,6 @@
 				<div class="mdl-tooltip mdl-tooltip--large" for="eat-apple-div" id="apple-left">
 					? left
 				</div>
-				<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="Battle.shoot()" id="shoot-button">
-					SHOOT
-				</button>
 			</div>
 			<div style="clear:both;"></div>
 		</div>
@@ -496,9 +568,9 @@
 		<div class="dialog-inner">
 			<div class="dialog-title">Convenience Store</div>
 			<div class="dialog-content">
-				<div id="buy-teleporter"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('teleporter')">BUY TELEPORT MACHINE</button> <span class="button-text">(<b>50000</b> gold)</span></div>
-				<div id="buy-blue-heart"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('blue-heart')">BUY A BLUE HEART</button> <span class="button-text">(<b>100000</b> gold)</span></div>
-				<div id="buy-smartphone"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('smartphone')">BUY A SMARTPHONE</button> <span class="button-text">(<b>10000000</b> gold)</span></div><br>
+				<div id="buy-teleporter"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('teleporter')">BUY TELEPORT MACHINE</button> <span class="button-text">(<b>50,000</b> gold)</span></div>
+				<div id="buy-blue-heart"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('blue-heart')">BUY A BLUE HEART</button> <span class="button-text">(<b>100,000</b> gold)</span></div>
+				<div id="buy-smartphone"><button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.buy('smartphone')">BUY A SMARTPHONE</button> <span class="button-text">(<b>10,000,000</b> gold)</span></div><br>
 				The teleport machine will appear near your respawn area.
 			</div>
 		</div>
@@ -565,12 +637,12 @@
 			<div class="dialog-content">
 				<div id="available-loans">
 					You could take a loan from the bank if you wanted to.<br><br>
-					<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.loan('small')">SMALL LOAN</button> <span class="button-text">(<b>1000000</b> gold)</span><br>
-					<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="alert('Sorry, you can\'t take a large loan right now.')">LARGE LOAN</button> <span class="button-text">(<b>100000000</b> gold)</span>
+					<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.loan('small')">SMALL LOAN</button> <span class="button-text">(<b>1,000,000</b> gold)</span><br>
+					<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="alert('Sorry, you can\'t take a large loan right now.')">LARGE LOAN</button> <span class="button-text">(<b>100,000,000</b> gold)</span>
 				</div>
 				<div id="pay-loan" style="display:none;">
 					You could pay your loan if you have enough gold.<br><br>
-					<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.loan('pay')">PAY LOAN</button> <span class="button-text">(<b>1000000</b> gold)</span>
+					<button class="mdl-button mdl-js-button mdl-button--primary mdl-js-ripple-effect" onclick="Player.loan('pay')">PAY LOAN</button> <span class="button-text">(<b>1,000,000</b> gold)</span>
 				</div><br>
 				If you have an unpaid loan, you can't visit houses in this area until you pay your loan (you still can visit the shop, training center, etc.).
 			</div>
@@ -587,7 +659,7 @@
 		<div class="dialog-inner">
 			<div class="dialog-title" id="temple-title"></div>
 			<div class="dialog-content" id="temple-content">
-				<div id="temple-armor" style="display:none;">Dragon skins make a really good armor, you can craft one if you have enough of these skins. Your knife also needs to have at least 50000 damage so we can use it to cut the dragon skin.</div>
+				<div id="temple-armor" style="display:none;">Dragon skins make a really good armor, you can craft one if you have enough of these skins. Your knife also needs to have at least 50,000 damage so we can use it to cut the dragon skin.</div>
 				<div id="temple-gun" style="display:none;">It is said that this gun is only available for purchase from the developer himself. To do so, open your browser's developer console (open the "keyboard shortcuts" section to see how) and type in this command: <span style="font-family:monospace;color:#0f0;background:black;">developer.shop()</span></div>
 				<div id="temple-potion" style="display:none;">Did you know that turning a blue heart into a potion gives you more max HP than the blue heart itself? To make a blue heart potion, you need a blue heart (obviously) and a shiny heart, also you have to have a dragon armor to make it.</div>
 			</div>
@@ -606,7 +678,7 @@
 		</div>
 	</div>
 	
-	<div id="modal" onclick="if(Battle.ongoing=='none'&&!Player.meditating)UI.hideAlert();"></div>
+	<div id="modal" onclick="if(Battle.ongoing=='none'&&!Player.meditating&&UI.dialogOpen!='chat')UI.hideAlert();"></div>
 	
 	<script type="text/javascript">
 		

@@ -12,6 +12,7 @@ var Battle = {
 			"maxhp": 12,
 			"damage": [1,3],
 			"gold": [2,3],
+			"xp": [1,2],
 			"timeout": [2000,2000]
 		},
 		
@@ -24,6 +25,7 @@ var Battle = {
 			"maxhp": 3,
 			"damage": [1,1],
 			"gold": [1,1],
+			"xp": [1,1],
 			"timeout": [2000,2500]
 		},
 		
@@ -36,6 +38,7 @@ var Battle = {
 			"maxhp": 25,
 			"damage": [2,4],
 			"gold": [5,10],
+			"xp": [3,5],
 			"timeout": [2500,3000]
 		},
 		
@@ -48,6 +51,7 @@ var Battle = {
 			"maxhp": 30,
 			"damage": [4,6],
 			"gold": [7,17],
+			"xp": [4,6],
 			"timeout": [2000,2500]
 		},
 		
@@ -60,6 +64,7 @@ var Battle = {
 			"maxhp": 30,
 			"damage": [2,3],
 			"gold": [40,50],
+			"xp": [3,5],
 			"timeout": [1000,2000]
 		},
 		
@@ -72,6 +77,7 @@ var Battle = {
 			"maxhp": 400,
 			"damage": [50,100],
 			"gold": [200,400],
+			"xp": [10,15],
 			"timeout": [1500,2000]
 		},
 		
@@ -84,6 +90,7 @@ var Battle = {
 			"maxhp": 3000,
 			"damage": [100,200],
 			"gold": [1000,1750],
+			"xp": [30,40],
 			"timeout": [1000,2000]
 		},
 		
@@ -96,6 +103,7 @@ var Battle = {
 			"maxhp": 70000,
 			"damage": [200,400],
 			"gold": [10000,20000],
+			"xp": [100,150],
 			"timeout": [2000,3000]
 		},
 		
@@ -108,6 +116,7 @@ var Battle = {
 			"maxhp": 10000,
 			"damage": [1,1],
 			"gold": [0,0],
+			"xp": [0,0],
 			"timeout": [1500,2000]
 		},
 		
@@ -120,6 +129,7 @@ var Battle = {
 			"maxhp": 500000,
 			"damage": [20000,50000],
 			"gold": [1000000,2000000],
+			"xp": [400,500],
 			"timeout": [1500,2000]
 		},
 		
@@ -132,6 +142,7 @@ var Battle = {
 			"maxhp": 500000,
 			"damage": [20000,50000],
 			"gold": [1000000,2000000],
+			"xp": [400,500],
 			"timeout": [1500,2000]
 		},
 		
@@ -144,6 +155,7 @@ var Battle = {
 			"maxhp": Infinity,
 			"damage": [50000,100000],
 			"gold": [100000000,100000000],
+			"xp": [0,0],
 			"timeout": [5000,10000]
 		},
 		
@@ -156,6 +168,7 @@ var Battle = {
 			"maxhp": 10000000,
 			"damage": [500000,1000000],
 			"gold": [0,0],
+			"xp": [0,0],
 			"timeout": [2000,3000]
 		},
 		
@@ -168,6 +181,7 @@ var Battle = {
 			"maxhp": 10000000000000,
 			"damage": [5000000000,10000000000],
 			"gold": [0,0],
+			"xp": [0,0],
 			"timeout": [2000,3000]
 		},
 		
@@ -180,12 +194,15 @@ var Battle = {
 			"maxhp": Infinity,
 			"damage": [Infinity,Infinity],
 			"gold": [0,0],
+			"xp": [0,0],
 			"timeout": [1,1]
 		},
 		
 	},
 	
 	"weapons": {
+	
+		/* also change the minDamage array in game.js if the default damage is changed here */
 	
 		"fists": {
 			"name": "fists",
@@ -271,6 +288,8 @@ var Battle = {
 	"playerisattacking": false,
 	"enemyisattacking": false,
 	"stunCountdown": "none",
+	"playerDodging": false,
+	"dodgeCountdown": "none",
 	
 	getEnemyInfo: function(name) {
 		return Battle.enemies[name];
@@ -305,9 +324,12 @@ var Battle = {
 			Battle.ongoing = x+","+y;
 			Player.isStunned = false;
 			if(Battle.stunCountdown!="none")clearTimeout(Battle.stunCountdown);
+			if(Battle.dodgeCountdown!="none")clearTimeout(Battle.dodgeCountdown);
 			
 			document.getElementById("attack-button").disabled = false;
 			document.getElementById("eat-apple").disabled = false;
+			document.getElementById("throw-gold").disabled = false;
+			document.getElementById("player-dodge").disabled = false;
 			
 			document.getElementById("battle-title").innerHTML = tools.upperFirst(enemyInfo.article)+" "+tools.upperFirst(enemyInfo.name)+"!";
 			document.getElementById("enemy-img").src = "images/"+enemyInfo.emoji+".png";
@@ -316,26 +338,48 @@ var Battle = {
 			else if(enemy.name=="snake")document.getElementById("enemy-special").innerHTML = "<br>Can stun it's enemy";
 			else document.getElementById("enemy-special").innerHTML = "";
 			
-			document.getElementById("enemy-hp").innerHTML = enemy.hp;
-			document.getElementById("enemy-maxhp").innerHTML = enemyInfo.maxhp;
-			if(enemyInfo.maxhp >= 1000000000000) document.getElementById("enemy-maxhp").innerHTML = "a lot";
-			document.getElementById("enemy-damage").innerHTML = enemyInfo.damage[1];
+			document.getElementById("enemy-hp").innerHTML = tools.num(enemy.hp);
+			document.getElementById("enemy-maxhp").innerHTML = tools.num(enemyInfo.maxhp);
+			if(enemyInfo.maxhp >= 1000000000000 && enemyInfo.maxhp != Infinity) document.getElementById("enemy-maxhp").innerHTML = "a lot";
+			document.getElementById("enemy-damage").innerHTML = tools.num(enemyInfo.damage[1]);
 			document.getElementById("enemy-bar").style.width = 72+"px";
 			document.getElementById("enemy-bullet").style.display = "none";
 			
 			var selectedWeapon = Battle.getWeaponInfo(Player.getWeapon());
-			document.getElementById("player-hp").innerHTML = Player.save.hp;
-			document.getElementById("player-maxhp").innerHTML = Player.save.maxhp;
+			document.getElementById("player-hp").innerHTML = tools.num(Player.save.hp);
+			document.getElementById("player-maxhp").innerHTML = tools.num(Player.save.maxhp);
 			if(Player.save.maxhp >= 1000000000000) document.getElementById("player-maxhp").innerHTML = "a lot";
 			document.getElementById("player-weapon").innerHTML = tools.upperFirst(selectedWeapon.name);
-			document.getElementById("player-damage").innerHTML = selectedWeapon.damage;
+			document.getElementById("player-damage").innerHTML = tools.num(selectedWeapon.damage);
 			document.getElementById("player-bar").style.width = Player.save.hp/Player.save.maxhp*72+"px";
 			document.getElementById("player-img").style.opacity = 1;
 			document.getElementById("player-bar").style.opacity = 1;
 			
+			document.getElementById("throw-price").innerHTML = tools.throwGoldPrice() + " gold";
+			if(Player.getLevel() >= 4) document.getElementById("throw-gold-div").style.display = "inline-block";
+			else document.getElementById("throw-gold-div").style.display = "none";
+			if(Player.getLevel() >= 6) document.getElementById("run-away").style.display = "inline-block";
+			else document.getElementById("run-away").style.display = "none";
+			if(Player.getLevel() >= 7) document.getElementById("player-dodge").style.display = "inline-block";
+			else document.getElementById("player-dodge").style.display = "none";
+			
+			Battle.playerDodging = false;
+			document.getElementById("player-img").style.top = 0 + "px";
+			document.getElementById("player-bar").style.top = 0 + "px";
+			
+			if(Player.save.killsToRun > 0) {
+				document.getElementById("run-away").disabled = true;
+				document.getElementById("run-away-count").innerHTML = Player.save.killsToRun + " kills left to run away again";
+			}
+			else {
+				document.getElementById("run-away").disabled = false;
+				document.getElementById("run-away-count").innerHTML = "You can run away now";
+			}
+			
 			if(enemyInfo.name=="ghost") {
 				Player.heart = Math.round(Player.save.hp/100);
 				if(Player.heart>7) Player.heart = 7;
+				else if(Player.heart<1) Player.heart = 1;
 				Player.initialHp = Player.save.hp;
 				document.getElementById("player-hp-text").style.display = "none";
 				document.getElementById("player-hp-heart").style.display = "inline-block";
@@ -383,8 +427,13 @@ var Battle = {
 				else document.getElementById("enemy-anim").style.right = (21-Math.abs(duration))/20*350+"px";
 				
 				if(duration==0) {
-				
-					if(Math.random()<.1) {
+					
+					var missChance;
+					if(Player.getLevel() >= 5) missChance = .15;
+					else missChance = .1;
+					
+					if(Battle.playerDodging) {}
+					else if(Math.random()<missChance) {
 						UI.showDamage(10,10,"player-anim","<span style='color:red;'>miss</span>");
 					}
 					else {
@@ -394,10 +443,10 @@ var Battle = {
 							if(Player.heart==0)thedamage = Player.save.hp;
 							Player.save.hp -= thedamage;
 							document.getElementById("player-hp-heart").innerHTML = tools.playerHeart(Player.heart);
-							UI.showDamage(10,10,"player-anim","<span style='color:red;'>-"+thedamage+"</span>");
+							UI.showDamage(10,10,"player-anim","<span style='color:red;'>-"+tools.num(thedamage)+"</span>");
 						}
 						else {
-							if(enemy.name=="snake" && Math.random()<.5 && !Player.isStunned) {
+							if(enemy.name=="snake" && Math.random()<.2 && !Player.isStunned) {
 								Player.isStunned = true;
 								document.getElementById("player-img").style.opacity = .5;
 								document.getElementById("player-bar").style.opacity = .5;
@@ -417,12 +466,12 @@ var Battle = {
 								
 								thedamage -= Math.round(reduction/100 * thedamage);
 								Player.save.hp -= thedamage;
-								UI.showDamage(10,10,"player-anim","<span style='color:red;'>-"+thedamage+"</span>");
+								UI.showDamage(10,10,"player-anim","<span style='color:red;'>-"+tools.num(thedamage)+"</span>");
 							}
 						}
 					}
 					
-					document.getElementById("player-hp").innerHTML = document.getElementById("player-hp-stats").innerHTML = Player.save.hp;
+					document.getElementById("player-hp").innerHTML = document.getElementById("player-hp-stats").innerHTML = tools.num(Player.save.hp);
 					document.getElementById("player-bar").style.width = Player.save.hp/Player.save.maxhp*72+"px";
 					if(Player.save.hp<=0) {
 						Player.save.hp = 0;
@@ -467,15 +516,20 @@ var Battle = {
 				document.getElementById("player-anim").style.left = (21-Math.abs(duration))/20*350+"px";
 				
 				if(duration==0) {
-				
-					if(Math.random()<.1) {
+					
+					var missChance;
+					if(Player.getLevel() >= 3) missChance = .05;
+					else missChance = .1;
+					
+					if(Math.random()<missChance) {
 						UI.showDamage(20,20,"enemy-anim","<span style='color:red;'>miss</span>");
 					}
 					else {
-						var thedamage = Math.min(Math.round(tools.getRandomInt(3/4 * selectedWeapon.damage, selectedWeapon.damage)), selectedWeapon.damage);
+						var zedamage = selectedWeapon.damage * (Player.numItems("cookie") + 1);
+						var thedamage = Math.min(Math.round(tools.getRandomInt(3/4 * zedamage, zedamage)), zedamage);
 						if(enemyInfo.name=="ghost")thedamage -= Math.round(3/4 * thedamage);
 						enemy.hp -= thedamage;
-						UI.showDamage(20,20,"enemy-anim","<span style='color:red;'>-"+thedamage+"</span>");
+						UI.showDamage(20,20,"enemy-anim","<span style='color:red;'>-"+tools.num(thedamage)+"</span>");
 					}
 					
 					if(Player.save.body=="heart-armor") {
@@ -486,12 +540,12 @@ var Battle = {
 							}
 							Player.save.hp += healed;
 							UI.showDamage(10,10,"player-anim","<span style='color:green;'>+"+healed+"</span>");
-							document.getElementById("player-hp").innerHTML = document.getElementById("player-hp-stats").innerHTML = Player.save.hp;
+							document.getElementById("player-hp").innerHTML = document.getElementById("player-hp-stats").innerHTML = tools.num(Player.save.hp);
 							document.getElementById("player-bar").style.width = Player.save.hp/Player.save.maxhp*72+"px";
 						}
 					}
 					
-					document.getElementById("enemy-hp").innerHTML = enemy.hp;
+					document.getElementById("enemy-hp").innerHTML = tools.num(enemy.hp);
 					document.getElementById("enemy-bar").style.width = enemy.hp/enemyInfo.maxhp*72+"px";
 					if(enemy.hp<=0) { //WIN!
 						enemy.hp = 0;
@@ -532,7 +586,7 @@ var Battle = {
 						Player.save.hp=Player.save.maxhp;
 					}
 					UI.showDamage(30,30,"player-anim","<span style='color:green;'>+"+healed+"</span>");
-					document.getElementById("player-hp").innerHTML = document.getElementById("player-hp-stats").innerHTML = Player.save.hp;
+					document.getElementById("player-hp").innerHTML = document.getElementById("player-hp-stats").innerHTML = tools.num(Player.save.hp);
 					document.getElementById("player-bar").style.width = Player.save.hp/Player.save.maxhp*72+"px";
 					UI.disable("eat-apple",5,"EAT APPLE");
 					UI.update();
@@ -553,6 +607,9 @@ var Battle = {
 			
 			if(enemy.name == "boss2" || enemy.name == "boss3") {
 				alert('You can\'t use the gun against the boss anymore!');
+			}
+			else if(enemy.name=="ghost") {
+				alert("I doubt you can shoot ghosts..");
 			}
 			else {
 				if(confirm('Are you sure to shoot using the infinity gun?')) {
@@ -577,47 +634,80 @@ var Battle = {
 		var y = Battle.ongoing.split(",")[1];
 		var enemy = Game.getEntity(x,y);
 		var enemyInfo = Battle.enemies[enemy.name];
+		var oldLevel = Player.getLevel();
+		
+		if(Player.getLevel() >= 2) {
+			if(Player.save.lastEnemy[0] === undefined || Player.save.lastEnemy[0] != enemy.name) {
+				Player.save.lastEnemy = [enemy.name, 1];
+			}
+			else if(Player.save.lastEnemy[0] == enemy.name) {
+				Player.save.lastEnemy[1]++;
+			}
+			var multiplier = Math.min(0.96 + Player.save.lastEnemy[1] / 25, 2);
+		}
+		else multiplier = 1;
+		
+		if(y != -206)Game.removeEntity(x,y);
 		
 		if(enemy.name=="ghost") {
-			UI.addLog("The "+enemyInfo.name+" drops a shiny heart.");
-			Game.removeEntity(x,y);
-			Game.addEntity(x,y,"s_heart");
+			UI.addLog("The "+enemyInfo.name+" drops a shiny heart");
+			if(y != -206)Game.addEntity(x,y,"s_heart");
 		}
 		else if(enemy.name=="dragon") {
-			var loot = tools.getRandomInt(enemyInfo.gold[0], enemyInfo.gold[1])
+			var loot = Math.round(tools.getRandomInt(enemyInfo.gold[0], enemyInfo.gold[1]) * multiplier);
+			var xpGained = tools.getRandomInt(enemyInfo.xp[0], enemyInfo.xp[1]);
 			Player.save.gold += loot;
-			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>"+loot+"</b> gold and got a dragon corpse.");
-			Game.removeEntity(x,y);
+			Player.save.xp += xpGained;
+			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>"+tools.num(loot)+"</b> gold, <b>"+tools.num(xpGained)+"</b> xp and got a dragon corpse.");
 			Player.addItem("dragon-corpse", 1);
 		}
 		else if(enemy.name=="boss") {
-			var loot = tools.getRandomInt(enemyInfo.gold[0], enemyInfo.gold[1])
+			var loot = tools.getRandomInt(enemyInfo.gold[0], enemyInfo.gold[1]);
 			Player.save.gold += loot;
-			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>"+loot+"</b> gold!");
+			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>"+tools.num(loot)+"</b> gold!");
 			UI.addLog("Or not?");
-			Game.removeEntity(x,y);
 			Game.addEnemy(x,y,"boss2");
 		}
 		else if(enemy.name=="boss2") {
 			Player.save.gold = Infinity;
 			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>Infinity</b> gold!");
-			Game.removeEntity(x,y);
 			Game.addEnemy(x,y,"boss3");
 		}
 		else if(enemy.name=="boss3") {
-			UI.addLog("<b>And don't forget to visit this game's subreddit at <a href=\"https://www.reddit.com/r/materialwarrior\" target=\"_blank\">/r/materialwarrior</a>. Cheers!</b>");
-			UI.addLog("<b>Thank you for playing the game! I hope you enjoyed it! :D</b>");
+		
+			if(Game.speedrun) {
+				Game.speedrun = false;
+				if(Game.speedrunTime < Game.speedrunHigh[0] || Game.speedrunHigh[0] == 0) {
+					Game.speedrunHigh[0] = Game.speedrunTime;
+					Game.speedrunHigh[1] = Player.numItems("cookie");
+					UI.addLog("<b>It's a new record!</b>");
+				}
+				UI.addLog("<b>Your speedrun time is: " + tools.msToTime(Game.speedrunTime) + "</b>");
+				Game.saveGame(false, false);
+			}
+			else {
+				UI.addLog("<b>And don't forget to visit this game's subreddit at <a href=\"https://www.reddit.com/r/materialwarrior\" target=\"_blank\">/r/materialwarrior</a>. Cheers!</b>");
+				UI.addLog("<b>Thank you for playing the game! I hope you enjoyed it! :D</b>");
+				UI.addLog("<b>You unlocked speedrun mode! Check the sidebar for more info.</b>");
+				ga('send', 'event', 'winGame', 'Yes');
+			}
+			
 			UI.addLog("<b>You killed "+enemyInfo.article+" "+enemyInfo.name+" for good!</b>");
-			Game.removeEntity(x,y);
 			Player.addItem("cookie", 1);
-			ga('send', 'event', 'winGame', 'Yes');
+			UI.speedrun();
+			
 		}
 		else {
-			var loot = tools.getRandomInt(enemyInfo.gold[0], enemyInfo.gold[1])
+			var loot = Math.round(tools.getRandomInt(enemyInfo.gold[0], enemyInfo.gold[1]) * multiplier);
+			var xpGained = tools.getRandomInt(enemyInfo.xp[0], enemyInfo.xp[1]);
 			Player.save.gold += loot;
-			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>"+loot+"</b> gold.");
-			Game.removeEntity(x,y);
+			Player.save.xp += xpGained;
+			UI.addLog("You killed "+enemyInfo.article+" "+enemyInfo.name+" for <b>"+tools.num(loot)+"</b> gold and gained <b>"+tools.num(xpGained)+"</b> xp.");
 		}
+		
+		if(Player.getLevel() > oldLevel) UI.addLog("Level up! Check the sidebar to see your new ability.");
+		
+		Player.save.killsToRun--;
 		Game.drawTiles();
 		UI.update();
 		Battle.run(enemy.name);
@@ -643,6 +733,75 @@ var Battle = {
 			}
 			else {
 				UI.hideAlert();
+			}
+		}
+	},
+	
+	runAway: function() {
+		if(Battle.ongoing!="none" && Player.getLevel() >= 6 && Player.save.killsToRun < 1) {
+			var x = Battle.ongoing.split(",")[0];
+			var y = Battle.ongoing.split(",")[1];
+			var enemy = Game.getEntity(x,y);
+			if(enemy.name=="ghost") {
+				alert("You can't run from ghosts!");
+			}
+			else {
+				Battle.run();
+				Player.save.killsToRun = 10;
+			}
+		}
+	},
+	
+	dodge: function() {
+		if(Battle.ongoing!="none" && Player.getLevel() >= 7 && !Battle.playerDodging) {
+			var x = Battle.ongoing.split(",")[0];
+			var y = Battle.ongoing.split(",")[1];
+			var enemy = Game.getEntity(x,y);
+			if(enemy.name=="ghost") {
+				alert("You can't hide from ghosts!");
+			}
+			else {
+				Battle.playerDodging = true;
+				document.getElementById("player-img").style.top = -1000 + "px";
+				document.getElementById("player-bar").style.top = -1000 + "px";
+				UI.disable("player-dodge",20,"DODGE");
+				Battle.dodgeCountdown = setTimeout(function () {
+					Battle.playerDodging = false;
+					document.getElementById("player-img").style.top = 0 + "px";
+					document.getElementById("player-bar").style.top = 0 + "px";
+				}, 3000);
+			}
+		}
+	},
+	
+	throwGold: function() {
+		if(Battle.ongoing!="none" && Player.getLevel() >= 4) {
+			var x = Battle.ongoing.split(",")[0];
+			var y = Battle.ongoing.split(",")[1];
+			var enemy = Game.getEntity(x,y);
+			var enemyInfo = Battle.getEnemyInfo(enemy.name);
+			if(enemy.name=="ghost") {
+				alert("Throwing gold won't work against ghosts!");
+			}
+			else {
+				var price = tools.throwGoldPrice();
+				var thedamage = Math.floor(price / 10);
+				Player.save.gold -= price;
+				document.getElementById("throw-price").innerHTML = tools.throwGoldPrice() + " gold";
+				
+				enemy.hp -= thedamage;
+				UI.showDamage(20,20,"enemy-anim","<span style='color:red;'>-"+tools.num(thedamage)+"</span>");
+
+				document.getElementById("enemy-hp").innerHTML = tools.num(enemy.hp);
+				document.getElementById("enemy-bar").style.width = enemy.hp/enemyInfo.maxhp*72+"px";
+				if(enemy.hp<=0) { //WIN!
+					enemy.hp = 0;
+					document.getElementById("enemy-hp").innerHTML = 0;
+					Battle.win();
+				}
+				
+				UI.disable("throw-gold",20,"THROW GOLD");
+				UI.update();
 			}
 		}
 	}

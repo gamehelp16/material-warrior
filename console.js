@@ -56,58 +56,14 @@ var console2 = { //so it does not crash with the existing console command
 			k=0;
 			for(i=left;i<right;i++) {
 				
-				var bgColor = Game.grassColor;
-				
-				//tile background color shenanigans
-				if(j>-250 && j<-150 && i>-250 && i<-150) {
-					if(i>=-201 && i<=-199 && j>=-187 && j<=-174) bgColor = Game.redColor;
-					else bgColor = Game.stoneColor;
-				}
-				else if((j>50&&j<60) || (j>90&&j<97)) {
-					if(Game.noise.get(i/20,j/10) > .01)bgColor = Game.grassColor;
-					else bgColor = Game.sandColor;
-				}
-				else if(j>59&&j<=90)bgColor = Game.sandColor;
-				else if((j>=97 && j<100) || (j>110 && j<=113)) {
-					bgColor = Game.sandColor;
-				}
-				else if(j>=114&&j<=150) {
-					if(i>=-1 && i<=19 && j>=116 && j<=150)bgColor = Game.grassColor;
-					else if(j>=114 && j<=119 && i>=47 && i<=53)bgColor = Game.grassColor;
-					else if(Game.noise.get(i/30,j/30) > .6)bgColor = Game.sandColor;
-				}
-				else if(j>150&j<=160) {
-					if(Game.noise.get(i/20,j/10) > .01)bgColor = Game.grassColor;
-					else bgColor = Game.brownStoneColor;
-				}
-				else if(j>160 && j<=255) {
-					bgColor = Game.brownStoneColor;
-				}
-				else if(j>255&j<=265) {
-					if(Game.noise.get(i/20,j/10) > .01)bgColor = Game.grassColor;
-					else bgColor = Game.brownStoneColor;
-				}
-				else if(j>265) {
-					bgColor = Game.grassColor;
-					if(Game.noise.get(i/30,j/30) > .6)bgColor = Game.sandColor;
-				}
-				
-				if(Game.noise.get(i/10,j/10) > .2 && j>=70 && j<=80)bgColor = Game.grassColor;
+				var bgcolor;
+				if(Game.gridColor[i+","+j] !== undefined) bgColor = Game.gridColor[i+","+j];
+				else bgColor = Game.getTileColor(i,j);
 				
 				if(i==Player.save.x&&j==Player.save.y) style.push(styles.tile("@", bgColor));
 				else if(Game.getEntity(i,j)!==undefined) style.push(styles.tile(Game.getEntityAscii(i,j), bgColor));
 				else if(Game.getTile(i,j)!==undefined) {
 					var tile = Game.getTile(i,j).c;
-					if(tile=="W") bgColor = Game.waterColor;
-					else if(tile=="C") bgColor = Game.sandColor;
-					else if(tile=="BR") bgColor = Game.bridgeColor;
-					else if(tile=="SA") bgColor = Game.sandColor;
-					else if(tile=="L") bgColor = Game.lavaColor;
-					else if(tile=="BS") bgColor = Game.brownStoneColor;
-					//else if(tile=="RO") bgColor = Game.roadColor;
-					else if(tile=="ST") bgColor = Game.stoneColor;
-					else if(tile.substr(0,4)=="rgb|") bgColor = "rgb("+tile.substr(4).split(",")+")", tile=" ";
-					
 					if(tile=="TP") style.push(styles.tile(" ", Game.teleporterColor));
 					else style.push(styles.tile(tile, bgColor));
 				}
@@ -170,7 +126,7 @@ var developer = {
 			console.log("%cIt looks like the dev is away, please try again later!", styles.error);
 		}
 		else {
-			console.log("%cWell, hi there! It looks like you are interested to buy my stuff, I sell one item only, though!\n\nInfinity Gun (15000000 gold)\n\n(You can only have one infinity gun at a time and the gun will break after one usage)\n\nTo buy the gun, type this (remove all double quotes if there are any): %cdeveloper.buy('gun')", "", styles.console);
+			console.log("%cWell, hi there! It looks like you are interested to buy my stuff, I sell one item only, though!\n\nInfinity Gun (15,000,000 gold)\n\n(You can only have one infinity gun at a time and the gun will break after one usage)\n\nTo buy the gun, type this (remove all double quotes if there are any): %cdeveloper.buy('gun')", "", styles.console);
 		}
 	},
 	

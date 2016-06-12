@@ -534,6 +534,78 @@ ins.adsbygoogle {
 	height: 200px;
 }
 
-/*.dialog-ms-shop {
+.xp-bar {
+	position: absolute;
+	margin: -16px 0 0 -16px;
+	background: #b71c1c;
+	width: 756px;
+	height: 7px;
+}
+
+.xp-bar.green {
+	background: #33691e;
+	z-index: 100;
+}
+
+.xp-bar.overlay {
+	background: transparent;
+	z-index: 200;
+}
+
+.mdl-tooltip {
+	max-width: 100%;
+}
+
+#player-img, #player-bar {
+	position: relative;
+}
+
+#speedrun-container {
+	width: 756px;
+	margin: 0 auto 50px auto;
+	min-height: 0;
+}
+
+.speedrun-time {
+	float: left;
+	padding: 20px 45px;
+}
+
+.speedrun-time:nth-child(2) {
+	border-left: 1px solid #eee;
+}
+
+.speedrun-title {
+	color: #aaa;
+	text-transform: uppercase;
+	margin-left: 3px;
+	margin-bottom: 10px;
+	line-height: 20px;
+}
+
+.speedrun-timer {
+	font-size: 50px;
+	line-height: 40px;
+	margin-bottom: 5px;
+	color: #333;
+	width: 266px;
+}
+
+#speedrun-container, #speedrun-mode, #soft-reset {
+	display: none;
+}
+
+/*#player-in-game {
+	width: 27px;
+	height: 27px;
+	background: transparent;
+	position: absolute;
+	left: 50%;
+	margin-top: -190px;
+	cursor: pointer;
+	z-index: 100;
+}
+
+.dialog-ms-shop {
 	font-family:'Comic Sans MS' !important;
 }*/

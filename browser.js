@@ -60,9 +60,9 @@ var browser = {
 				else if(item<5) image="1f496",name="Shiny Heart Pack",pack=seeded.integer({min: 20, max: 1000000}),price=seeded.integer({min: 80000, max: 100000})*pack;
 				else image="1f528",name="Hammer",pack=0,price=seeded.integer({min: 50000000000000, max: 150000000000000});
 				
-				if(seeded.integer({min: 1, max: 2})==1 && pack>0)include=" (contains "+pack+" hearts)";
+				if(seeded.integer({min: 1, max: 2})==1 && pack>0)include=" (contains "+tools.num(pack)+" hearts)";
 				
-				browser.addFeed("twitter", "<div class=\"twusername\"><b>"+chance.name()+"</b> <span class=\"grey\">"+chance.twitter()+"</span></div>\""+name+include+"\" is sold on "+site+" only for "+price+" gold! <a href=\"#\" onclick=\"browser.open('http://www."+site.toLowerCase()+".com/item/"+seed.replace(site,"")+"')\" class=\"tw-link\">http://www."+site.toLowerCase()+".com/item/"+seed.replace(site,"")+"</a>");
+				browser.addFeed("twitter", "<div class=\"twusername\"><b>"+chance.name()+"</b> <span class=\"grey\">"+chance.twitter()+"</span></div>\""+name+include+"\" is sold on "+site+" only for "+tools.num(price)+" gold! <a href=\"#\" onclick=\"browser.open('http://www."+site.toLowerCase()+".com/item/"+seed.replace(site,"")+"')\" class=\"tw-link\">http://www."+site.toLowerCase()+".com/item/"+seed.replace(site,"")+"</a>");
 				
 			}
 		}
@@ -80,9 +80,9 @@ var browser = {
 			else if(item<5) image="1f496",name="Shiny Heart Pack",pack=seeded.integer({min: 20, max: 1000000}),price=seeded.integer({min: 80000, max: 100000})*pack;
 			else image="1f528",name="Hammer",pack=0,price=seeded.integer({min: 50000000000000, max: 150000000000000});
 			
-			if(seeded.integer({min: 1, max: 2})==1 && pack>0)include=" (contains "+pack+" hearts)";
+			if(seeded.integer({min: 1, max: 2})==1 && pack>0)include=" (contains "+tools.num(pack)+" hearts)";
 			
-			browser.addFeed(site.toLowerCase(), "<img src=\"images/"+image+".png\" class=\"shop-img\"><div class=\"shop-item\">"+name+include+"<br><span class=\"grey\">"+price+" gold</span><br><a href=\"#\" onclick=\"browser.open('http://www."+site.toLowerCase()+".com/item/"+seed.replace(site,"")+"')\" class=\"shop-link\">Buy &raquo;</a></div><div style=\"clear:both\"></div>");
+			browser.addFeed(site.toLowerCase(), "<img src=\"images/"+image+".png\" class=\"shop-img\"><div class=\"shop-item\">"+name+include+"<br><span class=\"grey\">"+tools.num(price)+" gold</span><br><a href=\"#\" onclick=\"browser.open('http://www."+site.toLowerCase()+".com/item/"+seed.replace(site,"")+"')\" class=\"shop-link\">Buy &raquo;</a></div><div style=\"clear:both\"></div>");
 			
 		}
 		
@@ -154,9 +154,9 @@ var browser = {
 				else if(item<5) image="1f496",name="Shiny Heart Pack",pack=seeded.integer({min: 20, max: 1000000}),price=seeded.integer({min: 80000, max: 100000})*pack;
 				else image="1f528",name="Hammer",pack=0,price=seeded.integer({min: 50000000000000, max: 150000000000000});
 				
-				if(seeded.integer({min: 1, max: 2})==1 && pack>0)include=" (contains "+pack+" hearts)";
+				if(seeded.integer({min: 1, max: 2})==1 && pack>0)include=" (contains "+tools.num(pack)+" hearts)";
 				
-				title="<a href=\"#\" onclick=\"browser.open('http://www."+site.toLowerCase()+".com/item/"+seed.replace(site,"")+"')\" class=\"web-link\">\""+name+include+"\" is sold on "+site+" only for "+price+" gold!</a>";
+				title="<a href=\"#\" onclick=\"browser.open('http://www."+site.toLowerCase()+".com/item/"+seed.replace(site,"")+"')\" class=\"web-link\">\""+name+include+"\" is sold on "+site+" only for "+tools.num(price)+" gold!</a>";
 				url=site.toLowerCase()+".com";
 				
 			}
@@ -255,10 +255,10 @@ var browser = {
 				else if(item<5) image="1f496",name="Shiny Heart Pack",pack=seeded.integer({min: 20, max: 1000000}),price=seeded.integer({min: 80000, max: 100000})*pack;
 				else image="1f528",name="Hammer",pack=0,price=seeded.integer({min: 50000000000000, max: 150000000000000});
 				
-				if(seeded.integer({min: 1, max: 2})==1 && pack>0)include=" (contains "+pack+" hearts)";
-				if(pack>0)include2="<br>Pack contains "+pack+" hearts.<br>";
+				if(seeded.integer({min: 1, max: 2})==1 && pack>0)include=" (contains "+tools.num(pack)+" hearts)";
+				if(pack>0)include2="<br>Pack contains "+tools.num(pack)+" hearts.<br>";
 				
-				document.getElementById("webpage-contents").innerHTML += "<div style=\"padding:15px;\"><img src=\"images/"+image+".png\" class=\"shop-img\"><div class=\"shop-item\">"+name+include+"<br><span class=\"grey\">"+price+" gold</span><br>"+include2+"<a href=\"#\" onclick=\"browser.buy('"+seed+"')\" class=\"shop-link\">Buy Item</a><br><br>You could bookmark this page if you liked the deal and sure that it is not a scam.</div><div style=\"clear:both\"></div></div>";
+				document.getElementById("webpage-contents").innerHTML += "<div style=\"padding:15px;\"><img src=\"images/"+image+".png\" class=\"shop-img\"><div class=\"shop-item\">"+name+include+"<br><span class=\"grey\">"+tools.num(price)+" gold</span><br>"+include2+"<a href=\"#\" onclick=\"browser.buy('"+seed+"')\" class=\"shop-link\">Buy Item</a><br><br>You could bookmark this page if you liked the deal and sure that it is not a scam.</div><div style=\"clear:both\"></div></div>";
 				
 			}
 			else if(url.indexOf("i.imgur.com/")>=0) {
@@ -321,7 +321,7 @@ var browser = {
 		}
 		
 		if(Player.save.gold>=price) {
-			if(confirm('Are you sure to buy this item for '+price+' gold? This might be a scam!')) {
+			if(confirm('Are you sure to buy this item for '+tools.num(price)+' gold? This might be a scam!')) {
 				Player.save.gold-=price;
 				if(seeded.integer({min: 1, max: 5})==1) {
 					alert('It\'s a scam! :(');
@@ -332,13 +332,14 @@ var browser = {
 						Player.save.hp += 400*pack;
 						Player.save.maxhp += 400*pack;
 						alert('Item successfully purchased!');
-						UI.addLog("You bought <b>"+pack+"</b> blue hearts for <b>"+price+"</b> gold.");
+						UI.addLog("You bought <b>"+tools.num(pack)+"</b> blue hearts for <b>"+tools.num(price)+"</b> gold.");
+						Player.save.spawn2 = true;
 					}
 					else if(image=="1f496") {
 						Player.addItem("s_heart",pack);
 						Player.save.regenHp+=pack;
 						alert('Item successfully purchased!');
-						UI.addLog("You bought <b>"+pack+"</b> shiny hearts for <b>"+price+"</b> gold.");
+						UI.addLog("You bought <b>"+tools.num(pack)+"</b> shiny hearts for <b>"+tools.num(price)+"</b> gold.");
 						
 						var heartstoapply = pack;
 						
@@ -352,7 +353,7 @@ var browser = {
 					else if(image=="1f528") {
 						Player.save.inventory.weapon.push("hammer");
 						alert('Item successfully purchased!');
-						UI.addLog("You bought a hammer for <b>"+price+"</b> gold.");
+						UI.addLog("You bought a hammer for <b>"+tools.num(price)+"</b> gold.");
 					}
 				}
 			}

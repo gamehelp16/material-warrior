@@ -6,6 +6,19 @@ Play the game here: http://gamehelp16.github.io/material-warrior/
 
 ## Changelog:
 
+**Version 1.2 (June 12th 2016)**
+- **Added XP & levelling system** (the game might be worth replaying).
+- Added speedrun mode which will be available after completing the game.
+- Some packages will spawn randomly at the beginning area to add some variations to the early game (requires reset).
+- Numbers now have thousand separators.
+- Snakes now stun less often.
+- Cookies now increase your attack damage.
+- Fixed free scissors upgrade bug.
+- Fixed fire overlapping barriers bug.
+- Fixed bug regarding fighting ghosts with low health.
+- Balanced some numbers.
+- Some other fixes and improvements.
+
 **Version 1.1.2 (May 10th 2016)**
 - Knife bug fixed.
 

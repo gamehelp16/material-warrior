@@ -46,7 +46,10 @@ var keyboard = {
 		
 		//if(movetoy>=0 && movetoy<=Game.mapheight && movetox>=0 && movetox<=Game.mapwidth && UI.getDialogOpen()=="none" && playerMoved) {
 		if(UI.getDialogOpen()=="none" && playerMoved) {
-			if((Game.getTile(movetox,movetoy)===undefined || Game.getTile(movetox,movetoy).walkable) && Game.getEntity(movetox,movetoy)===undefined)Player.move(movetox,movetoy);
+			if((Game.getTile(movetox,movetoy)===undefined || Game.getTile(movetox,movetoy).walkable) && Game.getEntity(movetox,movetoy)===undefined) {
+				if(movetoy > -205 || Game.getEntity(-200,-175) === undefined) Player.move(movetox,movetoy);
+				else UI.addLog("A magical force holds you back from moving.");
+			}
 			if(Game.getTile(movetox,movetoy)!==undefined)Player.interact(movetox,movetoy);
 			if(Game.getEntity(movetox,movetoy)!==undefined)Player.interact(movetox,movetoy,"e");
 		}

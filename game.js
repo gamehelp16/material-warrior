@@ -6,17 +6,33 @@ var Game = {
 		"seed": Math.round(Math.random()*1000000000000),
 		"pathActivated": false,
 		"happyPizzaCustomers": [],
-		"bookmarks": ["http://www.twitter.com"], //only "http://www.twitter.com"
+		"bookmarks": ["http://www.twitter.com"] //only "http://www.twitter.com"
 	},
+	
+	"speedrun": false, //false
+	"speedrunStart": 0,
+	"speedrunTime": 0,
+	"speedrunHigh": [0,0],
 	
 	"mapwidth": 100,
 	"mapheight": 350,
 	"screenwidth": 28,
 	"screenheight": 14,
 	"grid": {},
+	"gridColor": {},
 	"display": "",
 	"noise": "",
 	"autosave": 30,
+	"levels": [0,20,70,370,1870,4870,9870,Infinity],
+	"levelsDesc": [
+		"Nothing special :(",
+		"Extra gold for every kill to the same enemy without dying.",
+		"Less chance to miss when attacking.",
+		"Unlocks the ability to throw gold against enemies.",
+		"Enemies miss more when attacking.",
+		"Unlocks the ability to run away once for each 10 kills.",
+		"Unlocks the ability to dodge from enemy attacks for 3 seconds."
+	],
 	
 	"pizzaCustomers": [],
 	"potentialPizzaCustomers": [],
@@ -172,6 +188,7 @@ var Game = {
 			Game.drawTiles();
 			UI.update();
 			UI.toggleMapinfo();
+			UI.speedrun();
 			UI.addLog("Use WASD / arrow keys to move, bump objects to interact.");
 			UI.addLog("You spawned in this world.");
 			Player.regen();
@@ -190,6 +207,8 @@ var Game = {
 				else document.getElementById("autosave-time").innerHTML = "Autosave is off.";
 			}, 1000);
 			
+			if(Game.speedrun) requestAnimationFrame(Game.speedrunLoop);
+			
 		}
 		
 	},
@@ -197,14 +216,15 @@ var Game = {
 	saveGame: function(asText, alertConfirm) {
 	
 		var stringtosave = {
-			"version": "1.1",
+			"version": 1.2,
 			"game": JSON.stringify(Game.save),
 			"player": JSON.stringify(Player.save, function(key, value) { return value == Infinity ? "Infinity" : value; }),
-			"damage": [Battle.getWeaponInfo("fists").damage, Battle.getWeaponInfo("scissors").damage, Battle.getWeaponInfo("knife").damage, Battle.getWeaponInfo("hammer").damage]
+			"damage": [Battle.getWeaponInfo("fists").damage, Battle.getWeaponInfo("scissors").damage, Battle.getWeaponInfo("knife").damage, Battle.getWeaponInfo("hammer").damage],
 		};
 		
 		if(!asText) {
 			localStorage.materialwarriorsave = btoa(JSON.stringify(stringtosave));
+			localStorage.speedrunHigh = btoa(JSON.stringify(Game.speedrunHigh));
 			if(alertConfirm) alert('Game saved!');
 		}
 		else {
@@ -229,10 +249,27 @@ var Game = {
 			}
 		}
 		else {
+			
 			if(localStorage.materialwarriorsave !== undefined && localStorage.materialwarriorsave != "") {
 				savedstring = JSON.parse(atob(localStorage.materialwarriorsave));
 				Game.applySave(savedstring);
 			}
+			
+			if(localStorage.speedrunHigh !== undefined) Game.speedrunHigh = JSON.parse(atob(localStorage.speedrunHigh));
+			else Game.speedrunHigh = [0,0];
+			
+			if(localStorage.speedrunMode !== undefined) {
+				Game.speedrun = true;
+				localStorage.removeItem("speedrunMode");
+				Game.saveGame(false, false);
+			}
+			
+			if(localStorage.cookiesTemp !== undefined) {
+				Player.setItem("cookie", parseInt(localStorage.cookiesTemp));
+				localStorage.removeItem("cookiesTemp");
+				Game.saveGame(false, false);
+			}
+			
 			Game.init();
 		}
 		
@@ -243,6 +280,7 @@ var Game = {
 		Game.save = JSON.parse(savedstring['game']);
 		Player.save = JSON.parse(savedstring['player'], function (key, value) { return value === "Infinity" ? Infinity : value; });
 		weaponDamage = savedstring['damage'];
+		gameVersion = savedstring['version'];
 		
 		for(i in Game.save.entities) {
 			entityName = Game.save.entities[i].name;
@@ -255,7 +293,23 @@ var Game = {
 			}
 		}
 		
-		var minDamage = [Battle.getWeaponInfo("fists").damage, Battle.getWeaponInfo("scissors").damage, Battle.getWeaponInfo("knife").damage, Battle.getWeaponInfo("hammer").damage];
+		if(typeof gameVersion === "string") { // lower than v1.2
+			Player.save.spawn2 = Player.save.inventory.item.heart>=1;
+			Player.save.xp = 0;
+			Player.save.killsToRun = 0;
+			Player.save.lastEnemy = [];
+			Game.addEnemy(-204,-206,"mouse");
+			Game.addEnemy(-203,-206,"rat");
+			Game.addEnemy(-202,-206,"camel1");
+			Game.addEnemy(-201,-206,"camel2");
+			Game.addEnemy(-200,-206,"snake");
+			Game.addEnemy(-199,-206,"goat");
+			Game.addEnemy(-198,-206,"dragon");
+			Game.addEnemy(-197,-206,"ghost");
+			Game.addEnemy(-196,-206,"alien2");
+		}
+		
+		var minDamage = [1,5,10,500000000000];
 		
 		Battle.setWeaponInfo("fists", "damage", Math.max(weaponDamage[0], minDamage[0]));
 		Battle.setWeaponInfo("scissors", "damage", Math.max(weaponDamage[1], minDamage[1]));
@@ -276,17 +330,35 @@ var Game = {
 	},
 	
 	reset: function() {
-		if(confirm("Are you sure to reset your game? This action can't be undone!")) {
-			if(prompt("Type \"RESET\" to reset your game") == "RESET") {
+		if(confirm("Are you sure to hard reset? This action can't be undone!")) {
+			if(prompt("Type \"HARD RESET\" to reset your game") == "HARD RESET") {
 				localStorage.removeItem("materialwarriorsave");
-				alert('Game has been reset!');
+				localStorage.removeItem("speedrunHigh");
+				alert('Game has been hard reset!');
 				window.location.reload();
 			}
 		}
 	},
 	
-	addTile: function(x,y,w,c) {
-		//bg = typeof type !== 'undefined' ? bg : "transparent";
+	softReset: function(speedrun) {
+	
+		if(speedrun) confirmmsg = "Are you sure to soft reset and turn on speedrun mode?";
+		else confirmmsg = "Are you sure to soft reset? This action can't be undone!";
+		
+		if(confirm(confirmmsg)) {
+			if(prompt("Type \"SOFT RESET\" to reset your game") == "SOFT RESET") {
+				localStorage.cookiesTemp = Player.numItems("cookie");
+				if(speedrun) localStorage.speedrunMode = true;
+				localStorage.removeItem("materialwarriorsave");
+				alert('Game has been soft reset!');
+				window.location.reload();
+			}
+		}
+		
+	},
+	
+	addTile: function(x,y,w,c,bg) {
+		bg = typeof bg !== 'undefined' ? bg : "transparent";
 		Game.grid[x+","+y] = {"walkable":w, "c":c}; //c = ascii
 	},
 	
@@ -301,9 +373,10 @@ var Game = {
 	},
 	
 	addEnemy: function(x,y,name) {
+		if(x==51 && y==12) return;
 		var enemyInfo = Battle.getEnemyInfo(name);
 		Game.save.entities[x+","+y] = {"name":name, "hp":enemyInfo.maxhp};
-		if(Game.entityCount[name]!=='undefined')Game.entityCount[name]++;
+		if(Game.entityCount[name]!==undefined)Game.entityCount[name]++;
 		UI.update();
 	},
 	
@@ -318,92 +391,6 @@ var Game = {
 	*/
 	
 	generate: function() {
-	
-		//generate city
-		
-		//var cityy=280;
-		
-		/*for(j=cityy;j<305;j++) {
-			for(i=-14;i<=Game.mapwidth+14;i++) {
-				Game.addTile(i,j,false,"BR");
-			}
-		}*/
-		
-		/*var ax = [];
-		var ay = [];
-		var bx = Math.floor(ROT.RNG.getUniform() * 3) + 1;
-		var by = Math.floor(ROT.RNG.getUniform() * 3) + 1;
-		var rand = Math.round(ROT.RNG.getUniform()*10);
-		var rand2 = Math.round(ROT.RNG.getUniform()*10);
-		
-		for(i=0;i<=Game.mapwidth;i++) {
-		
-			//Game.addTile(i,cityy-3,true,"ST");
-			//Game.addTile(i,cityy-2,true,"RO");
-			//Game.addTile(i,cityy-1,true,"RO");
-			//Game.addTile(i,cityy,true,"ST");
-			
-			//Game.addTile(i,cityy+50,true,"ST");
-			//Game.addTile(i,cityy+51,true,"RO");
-			//Game.addTile(i,cityy+52,true,"RO");
-			//Game.addTile(i,cityy+53,true,"ST");
-			
-			if((bx>5 && ROT.RNG.getUniform()<.3) || bx>7)ax[i] = 0, bx = 0;
-			bx++;
-		}
-		
-		for(j=0;j<50;j++) {
-			if((by>5 && ROT.RNG.getUniform()<.3) || by>7)ay[j] = 0, by = 0;
-			by++;
-		}
-		
-		var state = ROT.RNG.getState();
-		
-		for(j=0;j<50;j++) {
-			for(i=-14;i<=Game.mapwidth+14;i++) {
-				if(ax[i]==0)rand = Math.round(ROT.RNG.getUniform()*10);
-				if(ay[j]==0)rand2 = Math.round(ROT.RNG.getUniform()*10);
-				if(ax[i]==0) {
-					Game.addTile(i-2,j+cityy,true,"ST");
-					Game.addTile(i+1,j+cityy,true,"ST");
-				}
-				else if(ay[j]==0) {
-					Game.addTile(i,j+rand+cityy-2,true,"ST");
-					Game.addTile(i,j+rand+cityy+1,true,"ST");
-				}
-			}
-		}
-		
-		ROT.RNG.setState(state);
-		
-		for(j=0;j<50;j++) {
-			for(i=-14;i<=Game.mapwidth+14;i++) {
-				if(ax[i]==0)rand = Math.round(ROT.RNG.getUniform()*10);
-				if(ay[j]==0)rand2 = Math.round(ROT.RNG.getUniform()*10);
-				if(ax[i]==0) {
-					Game.addTile(i-1,j+cityy,true,"RO");
-					Game.addTile(i,j+cityy,true,"RO");
-				}
-				else if(ay[j]==0) {
-					Game.addTile(i,j+rand+cityy-1,true,"RO");
-					Game.addTile(i,j+rand+cityy,true,"RO");
-				}
-			}
-		}*/
-		
-		/*for(j=0;j<51;j++) {
-		
-			Game.addTile(0,j+cityy,true,"ST");
-			Game.addTile(1,j+cityy,true,"RO");
-			Game.addTile(2,j+cityy,true,"RO");
-			Game.addTile(3,j+cityy,true,"ST");
-			
-			Game.addTile(Game.mapwidth,j+cityy,true,"ST");
-			Game.addTile(Game.mapwidth-1,j+cityy,true,"RO");
-			Game.addTile(Game.mapwidth-2,j+cityy,true,"RO");
-			Game.addTile(Game.mapwidth-3,j+cityy,true,"ST");
-			
-		}*/
 		
 		for(i=-1;i<=Game.mapwidth+1;i++) { //generate barriers
 			Game.addTile(i,-1,false,"B");
@@ -447,7 +434,7 @@ var Game = {
 						}
 					}
 					else if(j>161 && j<=167) {
-						if(ROT.RNG.getUniform()<.05)Game.addTile(i,j,true,"FI");
+						if(ROT.RNG.getUniform()<.05  && i>=0 && i<=Game.mapwidth)Game.addTile(i,j,true,"FI");
 					}
 					else if(j>=170 && j<=185) {
 						Game.addTile(i,j,false,"L"); //generate lava river
@@ -486,28 +473,6 @@ var Game = {
 						if(Game.noise.get(i/30,j/30) > .7)Game.addTile(i,j,false,"W"); //lakes
 					}
 					
-					/*if(i>25 && j>123 && j<145) {
-							if(ROT.RNG.getUniform()<.005) {
-								console.log(i+" "+(j-1));
-								Game.addTile(i-1,j-1,false,"T1");
-								Game.addTile(i-1,j,false,"T2");
-								Game.addTile(i-1,j+1,false,"T1");
-								Game.addTile(i,j+1,false,"T2");
-								Game.addTile(i+1,j-1,false,"T2");
-								Game.addTile(i+1,j,false,"T1");
-								Game.addTile(i+1,j+1,false,"T2")
-								
-								Game.addBlank(i,j-2);
-								Game.addBlank(i,j);
-								Game.addBlank(i,j-1);
-								
-								Game.addEnemy(i,j-1,"alien");
-								
-								Game.addEntity(i,j,"package");
-								
-							}
-						}*/
-					
 					if(j>=12 && j<=18 && i>=50 && i<=55)Game.addBlank(i,j); //generate blank space
 					if(j>=39 && j<=45 && i>=22 && i<=28)Game.addBlank(i,j); //generate blank space
 					if(j>=39 && j<=45 && i>=22 && i<=28)Game.addBlank(i,j); //generate blank space
@@ -518,6 +483,7 @@ var Game = {
 					if(j>=259 && j<=264 && i>=48 && i<=55)Game.addBlank(i,j); //generate blank space
 					
 				}
+				Game.gridColor[i+","+j] = Game.getTileColor(i,j);
 			}
 		}
 		
@@ -591,41 +557,6 @@ var Game = {
 			}
 		});
 		
-		/*for(j=150;j<=180;j++) { //testing custom colored tiles
-			for(i=0;i<=Game.mapwidth;i++) {
-				k = j-150;
-				var red = (144-k<=136)?144-k:136;
-				var green = (202-k*5>=34)?202-k*5:34;
-				var blue = (110-k>=17)?110-k:17;
-				Game.addTile(i,j,true,"rgb|"+red+","+green+","+blue);
-			}
-		}*/
-		
-		/*var watery = 100;
-		for(i=-14;i<=Game.mapwidth+14;i++) { //generate water
-		
-			if(Math.abs(i)%3==0) {
-				if(ROT.RNG.getUniform()<.3 && watery>98)watery--;
-				else if(ROT.RNG.getUniform()<.7 && watery<102)watery++;
-			}
-			
-			if(i>=46 && i<=54)watery = 100;
-			
-			if(i!=-1 && i!=Game.mapwidth+1) {
-				Game.addTile(i,watery-1,true,"SA");
-				Game.addTile(i,watery-2,true,"SA");
-				Game.addTile(i,watery-3,true,"SA");
-				Game.addTile(i,watery+13,true,"SA");
-				Game.addTile(i,watery+14,true,"SA");
-				Game.addTile(i,watery+15,true,"SA");
-			}
-			
-			for(j=watery;j<=watery+12;j++) {
-				Game.addTile(i,j,false,"W");
-			}
-			
-		}*/
-		
 		Game.addBlank(17,148);
 		Game.addBlank(18,148);
 		Game.addBlank(19,148);
@@ -658,6 +589,7 @@ var Game = {
 		Game.addTile(53,264,false,"TC");
 		
 		//the negative zone
+		
 		for(i=-204;i<=-196;i++){
 			Game.addTile(i,-204,false,"B");
 		}
@@ -672,24 +604,13 @@ var Game = {
 			if(m%2==0)k++,l--;
 		}
 		
-		/*
-		
-		
-			I have a feeling that this part of the code will appear on a particular subreddit about bad codes and stuff
-			Before taking a screenshot, please listen to me first
-			Somehow the addEnemy function can't work inside loop and I don't know why, so this is what I do
-			Rather than posting the image, why not tell me what to do so the addEnemy function works inside a loop?
-			Thank you in advance
-			
-			                                                                                                 Sincerely,
-			
-			
-			                                                                                              The Developer
-																										  
-			PS: I have another feeling that this comment will appear on /r/ProgrammerHumor instead
-			
-			
-		*/
+		Game.addTile(-203,-210,false,"F");
+		Game.addTile(-202,-210,false,"S");
+		Game.addTile(-201,-210,false,"TC");
+		Game.addTile(-200,-210,false,"MS");
+		Game.addTile(-199,-210,false,"B3");
+		Game.addTile(-198,-210,false,"B4");
+		Game.addTile(-197,-210,false,"B5");
 		
 		if(Object.keys(Game.save.entities).length === 0 && JSON.stringify(Game.save.entities) === JSON.stringify({})) Game.generateACrapTonOfEntities(startx);
 		
@@ -747,6 +668,25 @@ var Game = {
 	},
 	
 	generateACrapTonOfEntities: function(startx) {
+	
+		/*
+		
+		
+			I have a feeling that this part of the code will appear on a particular subreddit about bad codes and stuff
+			Before taking a screenshot, please listen to me first
+			Somehow the addEnemy function can't work inside loop and I don't know why, so this is what I do
+			Rather than posting the image, why not tell me what to do so the addEnemy function works inside a loop?
+			Thank you in advance
+			
+			                                                                                                 Sincerely,
+			
+			
+			                                                                                              The Developer
+																										  
+			PS: I have another feeling that this comment will appear on /r/ProgrammerHumor instead
+			
+			
+		*/
 		
 		Game.addEntity(0,116,"package");
 		
@@ -814,69 +754,48 @@ var Game = {
 		
 		Game.addEnemy(-200,-175,"boss"); // a poop emoji is mandatory, right?
 		
+		Game.addEnemy(-204,-206,"mouse");
+		Game.addEnemy(-203,-206,"rat");
+		Game.addEnemy(-202,-206,"camel1");
+		Game.addEnemy(-201,-206,"camel2");
+		Game.addEnemy(-200,-206,"snake");
+		Game.addEnemy(-199,-206,"goat");
+		Game.addEnemy(-198,-206,"dragon");
+		Game.addEnemy(-197,-206,"ghost");
+		Game.addEnemy(-196,-206,"alien2");
+		
+		var z = 0;
+		while(z < 10) {
+			var packageX = tools.getRandomInt(5, 95);
+			var packageY = tools.getRandomInt(5, 50);
+			if(Game.getTile(packageX, packageY) === undefined && Game.getEntity(packageX, packageY) === undefined && packageX != 55 && packageY != 15) {
+				Game.addEntity(packageX, packageY, "package");
+				z++;
+			}
+		}
+		
 	},
 	
 	drawTiles: function() {
-		var top = Player.save.y-Game.screenheight/2;
-		var bottom = Player.save.y+Game.screenheight/2;
-		var left = Player.save.x-Game.screenwidth/2;
-		var right = Player.save.x+Game.screenwidth/2;
+		
+		var py = Player.save.y;
+		var px = Player.save.x;
+		var top = py-Game.screenheight/2;
+		var bottom = py+Game.screenheight/2;
+		var left = px-Game.screenwidth/2;
+		var right = px+Game.screenwidth/2;
 		
 		var k = l = 0;
 		for(j=top;j<=bottom;j++) {
 			k=0;
 			for(i=left;i<=right;i++) {
 				
-				var bgColor = Game.grassColor;
+				var bgcolor;
+				if((j<170 || j>185) && Game.gridColor[i+","+j] !== undefined) bgColor = Game.gridColor[i+","+j];
+				else bgColor = Game.getTileColor(i,j);
 				
-				//tile background color shenanigans
-				if(j>-250 && j<-150 && i>-250 && i<-150) {
-					if(i>=-201 && i<=-199 && j>=-187 && j<=-174) bgColor = Game.redColor;
-					else bgColor = Game.stoneColor;
-				}
-				else if((j>50&&j<60) || (j>90&&j<97)) {
-					if(Game.noise.get(i/20,j/10) > .01)bgColor = Game.grassColor;
-					else bgColor = Game.sandColor;
-				}
-				else if(j>59&&j<=90)bgColor = Game.sandColor;
-				else if((j>=97 && j<100) || (j>110 && j<=113)) {
-					bgColor = Game.sandColor;
-				}
-				else if(j>=114&&j<=150) {
-					if(i>=-1 && i<=19 && j>=116 && j<=150)bgColor = Game.grassColor;
-					else if(j>=114 && j<=119 && i>=47 && i<=53)bgColor = Game.grassColor;
-					else if(Game.noise.get(i/30,j/30) > .6)bgColor = Game.sandColor;
-				}
-				else if(j>150&j<=160) {
-					if(Game.noise.get(i/20,j/10) > .01)bgColor = Game.grassColor;
-					else bgColor = Game.brownStoneColor;
-				}
-				else if(j>160 && j<=255) {
-					bgColor = Game.brownStoneColor;
-				}
-				else if(j>255&j<=265) {
-					if(Game.noise.get(i/20,j/10) > .01)bgColor = Game.grassColor;
-					else bgColor = Game.brownStoneColor;
-				}
-				else if(j>265) {
-					bgColor = Game.grassColor;
-					if(Game.noise.get(i/30,j/30) > .6)bgColor = Game.sandColor;
-				}
-				
-				if(Game.noise.get(i/10,j/10) > .2 && j>=70 && j<=80)bgColor = Game.grassColor;
-			
 				if(Game.getTile(i,j)!==undefined) {
-					var tile = Game.getTile(i,j).c;
-					if(tile=="W") bgColor = Game.waterColor;
-					else if(tile=="C") bgColor = Game.sandColor;
-					else if(tile=="BR") bgColor = Game.bridgeColor;
-					else if(tile=="SA") bgColor = Game.sandColor;
-					else if(tile=="L") bgColor = Game.lavaColor;
-					else if(tile=="BS") bgColor = Game.brownStoneColor;
-					//else if(tile=="RO") bgColor = Game.roadColor;
-					else if(tile=="ST") bgColor = Game.stoneColor;
-					else if(tile.substr(0,4)=="rgb|") bgColor = "rgb("+tile.substr(4).split(",")+")", tile=" ";
-					
+					tile = Game.getTile(i,j).c;
 					if(tile=="TP") Game.display.draw(k, l, tile, Game.teleporterColor, bgColor);
 					else Game.display.draw(k, l, tile, "transparent", bgColor);
 				}
@@ -891,6 +810,64 @@ var Game = {
 			}
 			l++;
 		}
+		
+	},
+	
+	getTileColor: function(i,j) {
+		
+		var bgColor = Game.grassColor;
+		
+		//tile background color shenanigans
+		if(j>-250 && j<-150 && i>-250 && i<-150) {
+			if(i>=-201 && i<=-199 && j>=-187 && j<=-174) bgColor = Game.redColor;
+			else bgColor = Game.stoneColor;
+		}
+		else if((j>50&&j<60) || (j>90&&j<97)) {
+			if(Game.noise.get(i/20,j/10) > .01)bgColor = Game.grassColor;
+			else bgColor = Game.sandColor;
+		}
+		else if(j>59&&j<=90)bgColor = Game.sandColor;
+		else if((j>=97 && j<100) || (j>110 && j<=113)) {
+			bgColor = Game.sandColor;
+		}
+		else if(j>=114&&j<=150) {
+			if(i>=-1 && i<=19 && j>=116 && j<=150)bgColor = Game.grassColor;
+			else if(j>=114 && j<=119 && i>=47 && i<=53)bgColor = Game.grassColor;
+			else if(Game.noise.get(i/30,j/30) > .6)bgColor = Game.sandColor;
+		}
+		else if(j>150&j<=160) {
+			if(Game.noise.get(i/20,j/10) > .01)bgColor = Game.grassColor;
+			else bgColor = Game.brownStoneColor;
+		}
+		else if(j>160 && j<=255) {
+			bgColor = Game.brownStoneColor;
+		}
+		else if(j>255&j<=265) {
+			if(Game.noise.get(i/20,j/10) > .01)bgColor = Game.grassColor;
+			else bgColor = Game.brownStoneColor;
+		}
+		else if(j>265) {
+			bgColor = Game.grassColor;
+			if(Game.noise.get(i/30,j/30) > .6)bgColor = Game.sandColor;
+		}
+		
+		if(Game.noise.get(i/10,j/10) > .2 && j>=70 && j<=80)bgColor = Game.grassColor;
+	
+		if(Game.getTile(i,j)!==undefined) {
+			var tile = Game.getTile(i,j).c;
+			if(tile=="W") bgColor = Game.waterColor;
+			else if(tile=="C") bgColor = Game.sandColor;
+			else if(tile=="BR") bgColor = Game.bridgeColor;
+			else if(tile=="SA") bgColor = Game.sandColor;
+			else if(tile=="L") bgColor = Game.lavaColor;
+			else if(tile=="BS") bgColor = Game.brownStoneColor;
+			//else if(tile=="RO") bgColor = Game.roadColor;
+			else if(tile=="ST") bgColor = Game.stoneColor;
+			else if(tile.substr(0,4)=="rgb|") bgColor = "rgb("+tile.substr(4).split(",")+")", tile=" ";
+		}
+		
+		return bgColor;
+		
 	},
 	
 	getTile: function(x,y) {
@@ -936,6 +913,26 @@ var Game = {
 		Game.addEnemy(x2,y2,enemyName);
 		Game.drawTiles();
 		UI.update();
+	},
+	
+	activateSpeedrun: function(activate) {
+		if(activate) {
+			Game.softReset(true);
+		}
+		else {
+			if(confirm("Are you sure to turn off speedrun mode?")) Game.speedrun = false;
+		}
+		UI.update();
+		UI.speedrun();
+	},
+	
+	speedrunLoop: function(currentTime) {
+		if(Game.speedrunStart == 0) Game.speedrunStart = currentTime;
+		if(Game.speedrun) {
+			Game.speedrunTime = currentTime - Game.speedrunStart;
+			document.getElementById("current-time").innerHTML = tools.msToTime(Game.speedrunTime);
+			requestAnimationFrame(Game.speedrunLoop);
+		}
 	}
 	
 };
