@@ -508,7 +508,8 @@ small.actions a:hover { text-decoration:underline; }
 	width:200px;
 }
 
-ins.adsbygoogle {
+#ads {
+	width: 728px;
 	margin: 50px auto;
 	text-align: center;
 }
