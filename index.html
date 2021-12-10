@@ -3,24 +3,34 @@
 <head>
 
 	<!--
-	
+
 		Hey, you! Don't cheat!
-			
+
 	-->
-	
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-71788573-2"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-71788573-2');
+	</script>
+
 	<meta name="theme-color" content="#3f51b5">
 	<title>Material Warrior</title>
-	
+
 	<link rel="stylesheet" href="material.min.css">
 	<link rel="stylesheet" href="style.css">
 	<link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="shortcut icon" type="image/png" href="images/1f61b.png"/>
-	
+
 	<script src="material.min.js"></script>
 	<script src="rot.min.js"></script>
 	<script src="chance.min.js"></script>
-	
+
 	<script src="tools.js"></script>
 	<script src="ui.js"></script>
 	<script src="player.js"></script>
@@ -30,11 +40,11 @@
 	<script src="console.js"></script>
 	<script src="browser.js"></script>
 	<script src="showads.js"></script>
-	
+
 </head>
 <body class="mdl-color--grey-100 mdl-color-text--grey-700">
 
-	<script>
+	<!-- <script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -43,7 +53,7 @@
 	  ga('create', 'UA-71788573-2', 'auto');
 	  ga('send', 'pageview');
 
-	</script>
+	</script> -->
 
 	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 	  <header class="mdl-layout__header">
@@ -56,7 +66,7 @@
 		  <a href="#scroll-tab-3" class="mdl-layout__tab" style="display:none;" id="tab-smartphone">Smartphone</a>
 		</div>
 	  </header>
-	  
+
 	  <div class="mdl-layout__drawer">
 		<img src="images/1f61b.png" class="drawer-image">
 		<span class="mdl-layout-title">Material Warrior</span>
@@ -68,11 +78,11 @@
 		  <a class="mdl-navigation__link" href="#" onclick="UI.showAlert('about')"><i class="material-icons">help</i><span>About</span></a>
 		</nav>
 	  </div>
-	  
+
 	  <main class="mdl-layout__content">
 		<section class="mdl-layout__tab-panel is-active" id="scroll-tab-1">
 		  <div class="page-content">
-		  
+
 			<div class="mdl-card mdl-shadow--4dp" id="speedrun-container">
 				<div class="mdl-card__supporting-text">
 					<div class="speedrun-time">
@@ -86,8 +96,22 @@
 					<div style="clear: both;"></div>
 				</div>
 			</div>
-		  
+
 			<div class="game-container">
+				<div class="mdl-card mdl-shadow--2dp dec2021msg-card mdl-js-ripple-effect">
+					<div class="mdl-card__title mdl-card--expand">
+						<h4>
+							Read the new<br>
+							2021 message!
+						</h4>
+					</div>
+					<div class="mdl-card__actions mdl-card--border">
+						<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="UI.showAlert('dec2021msg')">
+							Click here to read
+						</a>
+					</div>
+				</div>
+
 				<div class="mdl-card mdl-shadow--4dp" style="width:auto">
 				  <div class="mdl-card__media" class="game-card">
 					<div id="mini-mapinfo">
@@ -125,15 +149,15 @@
 				  </div>
 				</div>
 			</div>
-			
+
 			<div id="no-ads" style="display:none;">It would be appreciated if you disable adblock!</div>
 			<div id="ads">
 				<iframe data-aa='650128' src='//ad.a-ads.com/650128?size=728x90' scrolling='no' style='width:728px; height:90px; border:0px; padding:0;overflow:hidden' allowtransparency='true'></iframe>
 			</div>
-			
+
 		  </div>
 		</section>
-		
+
 		<section class="mdl-layout__tab-panel" id="scroll-tab-2" style="display:none;">
 		  <div class="page-content">
 			<div class="item-section">
@@ -150,7 +174,7 @@
 				  <div class="mdl-card__actions mdl-card--border" id="selected-weapon-damage"></div>
 				</div>
 			</div>
-			
+
 			<div class="item-section" id="head-section" style="display:none;">
 				<h6>HEAD</h6>
 				<div id="head-options" class="item-options mdl-shadow--2dp">
@@ -171,7 +195,7 @@
 				  </div>
 				</div>
 			</div>
-			
+
 			<div class="item-section" id="body-section" style="display:none;">
 				<h6>BODY</h6>
 				<div id="body-options" class="item-options mdl-shadow--2dp">
@@ -192,11 +216,11 @@
 				  </div>
 				</div>
 			</div>
-			
+
 			<div class="item-section" id="inventory-items"></div>
 		  </div>
 		</section>
-		
+
 		<section class="mdl-layout__tab-panel" id="scroll-tab-3" style="display:none;">
 			<div id="smartphone-container">
 				<div class="mdl-card mdl-shadow--4dp smartphone">
@@ -217,8 +241,8 @@
 		</section>
 	  </main>
 	</div>
-	
-	
+
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-settings">
 		<div class="dialog-inner">
 			<div class="dialog-title">Settings</div>
@@ -243,7 +267,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-save-code">
 		<div class="dialog-inner">
 			<div class="dialog-title">Save the code somewhere save!</div>
@@ -258,7 +282,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-about">
 		<div class="dialog-inner">
 			<div class="dialog-title">About this game</div>
@@ -269,11 +293,11 @@
 				<a href="http://ondras.github.io/rot.js/hp/" target="_blank">rot.js</a> by Ondrej Zara<br>
 				<a href="https://github.com/twitter/twemoji" target="_blank">Twitter Emojis</a> by Twitter<br>
 				<a href="http://chancejs.com/" target="_blank">chance.js</a> by Victor Quinn<br><br>
-				
+
 				Subreddit: <a href="https://www.reddit.com/r/materialwarrior" target="_blank">/r/materialwarrior</a><br>
 				GitHub Repo: <a href="https://github.com/gamehelp16/material-warrior" target="_blank">https://github.com/gamehelp16/material-warrior</a><br>
 				Game Version: 1.2 (<a href="https://github.com/gamehelp16/material-warrior/blob/gh-pages/README.md" target="_blank">view changelog</a>)<br><br>
-				
+
 				Check out my other (older) games:<br>
 				<a href="http://gamehelp16.github.io/thegoldfactory/" target="_blank">The Gold Factory</a><br>
 				<a href="http://gamehelp16.github.io/chickens/" target="_blank">Chickens!</a>
@@ -286,7 +310,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-keyboard">
 		<div class="dialog-inner">
 			<div class="dialog-title">Keyboard Shortcuts</div>
@@ -320,7 +344,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-xp-system">
 		<div class="dialog-inner">
 			<div class="dialog-title">Levels &amp; XP</div>
@@ -336,7 +360,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-speedrun">
 		<div class="dialog-inner">
 			<div class="dialog-title">Speedrun Mode</div>
@@ -353,7 +377,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-forge">
 		<div class="dialog-inner">
 			<div class="dialog-title">The Forge</div>
@@ -372,7 +396,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-training">
 		<div class="dialog-inner">
 			<div class="dialog-title">Training Center</div>
@@ -388,7 +412,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-shop">
 		<div class="dialog-inner">
 			<div class="dialog-title">The Shop</div>
@@ -407,7 +431,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-ms-shop">
 		<div class="dialog-inner">
 			<div class="dialog-title">MS Paint Shop</div>
@@ -427,7 +451,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-battle">
 		<div class="dialog-inner">
 			<div class="dialog-title" id="battle-title">Battle!</div>
@@ -493,7 +517,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-chat">
 		<div class="dialog-inner">
 			<div class="dialog-title" id="chat-title">Chat</div>
@@ -509,7 +533,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-package">
 		<div class="dialog-inner">
 			<div class="dialog-title" id="package-title">A Package!</div>
@@ -525,7 +549,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-meditate">
 		<div class="dialog-inner">
 			<div class="dialog-title">Meditate</div>
@@ -538,7 +562,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-locked-house">
 		<div class="dialog-inner">
 			<div class="dialog-title">A House</div>
@@ -557,7 +581,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-store">
 		<div class="dialog-inner">
 			<div class="dialog-title">Convenience Store</div>
@@ -575,7 +599,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-museum">
 		<div class="dialog-inner">
 			<div class="dialog-title">Museum</div>
@@ -592,7 +616,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-script">
 		<div class="dialog-inner">
 			<div class="dialog-title">Old Script</div>
@@ -605,7 +629,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-temple">
 		<div class="dialog-inner">
 			<div class="dialog-title">The Temple</div>
@@ -624,7 +648,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-bank">
 		<div class="dialog-inner">
 			<div class="dialog-title">Bank</div>
@@ -648,7 +672,7 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
 	<div class="dialog mdl-shadow--16dp dialog-wide dialog-temple2">
 		<div class="dialog-inner">
 			<div class="dialog-title" id="temple-title"></div>
@@ -671,11 +695,57 @@
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-	
+
+	<div class="dialog mdl-shadow--16dp dialog-wide dialog-dec2021msg">
+		<div class="dialog-inner">
+			<div class="dialog-title">Message from the Developer (December 2021)</div>
+			<div class="dialog-content" style="max-height: 300px; overflow-y: auto;">
+				Hi! If you're reading this I just would like to thank you for playing this game up until now, honestly I didn't expect that this game still has some players even 6+ years after its release!<br><br>
+				I also would like to thank the people who have uploaded gameplay videos of this game, it definitely feels "wow" seeing gameplay videos of my own game!
+				<ul>
+					<li>
+						<a href="https://www.youtube.com/watch?v=iQr-o_fDcrU" target="_blank">Attempt 1: Success | Material Warrior Speed Run Personal Bests</a>
+					</li>
+					<li>
+						<a href="https://www.youtube.com/watch?v=sVpGOVw3HeQ" target="_blank">Attempt 2: Success | Material Warrior Speed Run Personal Bests</a>
+					</li>
+					<li>
+						<a href="https://www.youtube.com/watch?v=MXrBULc4D7c" target="_blank">MY FIRST MURDER WEAPON!!!(Material Warrior Ep 1)</a>
+					</li>
+				</ul>
+				If you enjoyed this game you can check out several other games I have made in the past:
+				<ul>
+					<li>
+						<a href="https://gamehelp16.github.io/thegoldfactory/" target="_blank">The Gold Factory</a>
+					</li>
+					<li>
+						<a href="https://gamehelp16.github.io/chickens/" target="_blank">Chickens!</a>
+					</li>
+					<li>
+						<a href="https://gamehelp16.github.io/world-warper-ld30/" target="_blank">World Warper</a>
+					</li>
+					<li>
+						<a href="https://gamehelp16.github.io/the-unconventional-weapon/" target="_blank">The Unconventional Weapon</a>
+					</li>
+					<li>
+						<a href="https://gamehelp16.github.io/which-subreddit/" target="_blank">Which Subreddit?</a>
+					</li>
+				</ul>
+				You can also check out this <a href="https://gamehelp16.github.io/post/welcome/" target="_blank">blog post I made</a> where I list some other things that I have created just in case you're curious. It just feels amazing knowing that there people who are still playing something I made many years ago, so once again thank <i>you</i>! :)
+			</div>
+		</div>
+		<div class="dialog-actions">
+			<button class="mdl-button mdl-js-button mdl-js-ripple-effect" onclick="UI.hideAlert()">
+				CLOSE
+			</button>
+			<div style="clear:both;"></div>
+		</div>
+	</div>
+
 	<div id="modal" onclick="if(Battle.ongoing=='none'&&!Player.meditating&&UI.dialogOpen!='chat')UI.hideAlert();"></div>
-	
+
 	<script type="text/javascript">
-		
+
 		Game.loadGame(false);
 		hasAdblock = false;
 		if(window.canRunAds === undefined) {
@@ -683,8 +753,8 @@
 			hasAdblock = true;
 		}
 		ga('send', 'event', 'HasAdblock', hasAdblock ? 'Yes' : 'No', {'nonInteraction': true})
-		
+
 	</script>
-	
+
 </body>
 </html>

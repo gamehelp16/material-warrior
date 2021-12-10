@@ -121,6 +121,7 @@
 }
 
 .game-container {
+	position:relative;
 	margin:auto;
 	width:756px;
 }
@@ -196,7 +197,7 @@
 }
 
 .mdl-button.button-left {
-	float:left !important; 
+	float:left !important;
 }
 
 #modal, .dialog {
@@ -594,6 +595,17 @@ small.actions a:hover { text-decoration:underline; }
 
 #speedrun-container, #speedrun-mode, #soft-reset {
 	display: none;
+}
+
+.dec2021msg-card.mdl-card {
+	position: absolute;
+	left: -230px;
+  width: 200px;
+	height: 150px;
+	min-height: 0;
+}
+.dec2021msg-card > .mdl-card__title > h4 {
+  margin: 0;
 }
 
 /*#player-in-game {
